@@ -320,7 +320,7 @@ def SubProber(url):
 
     if attempt==3:
             
-        print(f"{blue}[!]Reached Maximum connection for this url: {url}")
+        print(f"{blue}[!]Reached Maximum connection for this url: {urls}")
 
 
 with concurrent.futures.ThreadPoolExecutor(max_workers = args.concurrency) as executor:

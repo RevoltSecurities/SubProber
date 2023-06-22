@@ -8,7 +8,7 @@ faster and realiable.Note handle your concurrency level because more level of co
 <h1>Steps to Install the SubProber</h1>
 <h5>Step 1: git clone the Subprober:
       
-      git clone htttps://github.com/sanjai-AK47/SubProber
+      git clone htttps://github.com/sanjai-AK47/SubProber.git
 <h5>Step 2: Change Your directory to the SubProber</h5>
 
      cd ~/SubProber

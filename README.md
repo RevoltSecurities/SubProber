@@ -43,7 +43,7 @@ Subprober is a Python tool designed to efficiently check the HTTP status codes o
    For Windows and macOS, run the Python script:
 
    ```bash
-   python subprober.py
+   python Subprober.py
    ```
 
 ## Usage

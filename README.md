@@ -83,7 +83,10 @@ Options:
    subprober -f subdomains.txt -v
    ```
 
-## Report Iussues
+# Relesase:
+### For linux users get the latest version binary files here in [latest release](https://github.com/sanjai-AK47/SubProber/releases/tag/v1.0.0) to execute the Subprober anywhere in your Linux machine
+
+# Report Iussues
 
 1.If any user facing any issues when running the subprober python file or Issue with the Linux binary file can report their issues
 

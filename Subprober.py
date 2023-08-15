@@ -70,7 +70,7 @@ def get_version():
     
     version = "v1.0.0"
     
-    url = f"https://api.github.com/repos/sanjai-AK47/Subdominator/releases/latest"
+    url = f"https://api.github.com/repos/sanjai-AK47/Subprober/releases/latest"
     
     try:
         

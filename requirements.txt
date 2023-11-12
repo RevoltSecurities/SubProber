@@ -1,0 +1,5 @@
+beautifulsoup4==4.11.1
+colorama==0.4.6
+httpx==0.25.0
+Requests==2.31.0
+setuptools==68.1.2

@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='subprober',
-    version='1.0.1',
+    version='1.0.2',
     author='D. Sanjai Kumar',
     author_email='bughunterz0047@gmail.com',
     description='Subrpober - A http protocol probing tool',

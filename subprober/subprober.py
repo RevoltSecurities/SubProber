@@ -101,7 +101,7 @@ args = parser.parse_args()
 
 def get_version():
     
-    version = "v1.0.2"
+    version = "v1.0.1"
     
     url = f"https://api.github.com/repos/sanjai-AK47/Subprober/releases/latest"
     
@@ -891,7 +891,7 @@ def main():
         
         if args.update:
             
-            version = "v1.0.2"
+            version = "v1.0.1"
     
             url = f"https://api.github.com/repos/sanjai-AK47/Subprober/releases/latest"
     

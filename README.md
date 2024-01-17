@@ -1,24 +1,23 @@
-# Subprober v1.0.3 - Fast Probing Tool for Penetration Testing
+# Subprober v1.0.4 - Fast Probing Tool for Penetration Testing
 
 ![GitHub last commit](https://img.shields.io/github/last-commit/sanjai-AK47/Subprober) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/sanjai-AK47/Subprober) [![GitHub license](https://img.shields.io/github/license/sanjai-AK47/Subprober)](https://github.com/sanjai-AK47/Subprober/blob/main/LICENSE) [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/d-sanjai-kumar-109a7227b/)
 
 ### Overview
 
-Subprober v1.0.3 is a powerful and efficient tool designed for penetration testers and security professionals. This release introduces several enhancements, bug fixes, and new features to elevate your subdomain probing experience. Subprober facilitates fast and reliable information extraction, making it an invaluable asset for penetration testing workflows.
+Subprober v1.0.4 is a powerful and efficient tool designed for penetration testers and security professionals. This release introduces several enhancements, bug fixes, and new features to elevate your subdomain probing experience. Subprober facilitates fast and reliable information extraction, making it an invaluable asset for penetration testing workflows.
 
-### Features in V1.0.3:
-- Subprober logical bug has resolved .
-- Subprober accuracy in results are improved .
-- Now Subprober shows the progress of it task .
-- Concurrency has been improved .
-- Support only stdin .
+### Features in V1.0.4:
+- Subprober Concurrency and Accuracy are Improved with libraries like aiohttp,asyncio
+- Subprober Error handling and Synchronization are improved
+- Resolved some Bugs for Subprober
 
-### Installation
+### Installation and Updates
 
 ##### Method 1:
 
 ```bash
-pip install subprober
+pip install git+https://github.com/sanjai-AK47/Subprober.git
+subprober -h
 ```
 
 #### Method 2:
@@ -27,6 +26,7 @@ pip install subprober
 git clone https://github.com/sanjai-AK47/SubProber.git
 cd Subprober
 pip install .
+subprober -h
 ```
 
 ### Help for Subprober:
@@ -34,6 +34,8 @@ pip install .
 ```yaml
 subprober -h
  
+
+
 
    _____       __    ____             __             
   / ___/__  __/ /_  / __ \_________  / /_  ___  _____
@@ -49,7 +51,7 @@ subprober -h
                                                   
 
           
-Subprober - A Fast Probing Tool for Penetration testing
+Subprober - An essential HTTP multiple Probing Tool for Penetration testers and Bug Bounty Hunters
 
 [Description] :
 
@@ -57,56 +59,64 @@ Subprober - A Fast Probing Tool for Penetration testing
 
 [Flags]:
 
-    -f, --filename            Specify the filename containing a list of subdomains for targeted probing. 
-                              This flag is used to find and analyze status codes and other pertinent details.
+    -f,   --filename              Specify the filename containing a list of subdomains for targeted probing. 
+                                 This flag is used to find and analyze status codes and other pertinent details.
                       
-    -h, --help                Show this help message for you and exit!
+    -h,   --help                Show this help message for you and exit!
     
-    -u, --url                 Specify a target URL for direct probing. This flag allows for the extraction of 
-                              status codes and other valuable information.
-                      
-    -sp. --show-progress      Enable show prgress mode which will show the progress of the Subprober with progress bar like this ( example: |████████████████████████████████████████| 4000/4000 [100%] in 12.4s (3.23/s) ).
+    -u,   --url                 Specify a target URL for direct probing. This flag allows for the extraction of 
+                                 status codes and other valuable information.
 
+    -o,   --output              Define the output filename to store the results of the probing operation.
 
-    -o, --output              Define the output filename to store the results of the probing operation.
+    -c,   --concurrency          Set the concurrency level for multiple processes. Default is 10.
 
-    -c, --concurrency         Set the concurrency level for multiple processes. Default is 10.
+    -tl,  --title                Retrieve and display the title of subdomains.
 
-    -tl, --title              Retrieve and display the title of subdomains.
+    -to,  --timeout              Set a custom timeout value for sending requests.
 
-    -to, --timeout            Set a custom timeout value for sending requests.
+    -sv,  --server               Identify and display the server information associated with subdomains.
 
-    -sv, --server             Identify and display the server information associated with subdomains.
+    -wc,  --word-count           Retrieve and display the content length of subdomains.
 
-    -wc, --word-count         Retrieve and display the content length of subdomains.
+    -apt, --application-type     Determine and display the application type of subdomains.
 
-    -apt, --application-type  Determine and display the application type of subdomains.
+    -ex,  --exclude              Exclude specific response status code(s) from the analysis.
 
-    -ex, --exclude            Exclude specific response status code(s) from the analysis.
+    -mc,  --match                Specify specific response status code(s) to include in the analysis.
 
-    -mc, --match              Specify specific response status code(s) to include in the analysis.
+    -s,   --silent               Enable silent mode to suppress the display of Subprober banner and version information.
 
-    -suo, --save-urls-only    Save only URLs for particular status codes, excluding other information.
+    -v,   --verbose              Enable verbose mode to display error results on the console.
+    
+    -p,   --path                 Specify a path for probe and get results ex:: -p admin.php
+    
+    -px,  --proxy                Specify a proxy to send the requests through your proxy or BurpSuite ex: 127.0.0.1:8080
+    
+    -gw,  --grep-word            Enable The grep word flag will be usefull when grepping partiuclar codes like for 200: OK ---> cat subprober-results.txt | grep OK 
+                                 This will show the results with 200-299 range codes
+                                 
+    -ar,  --allow-redirect       Enabling these flag will make Subprober to follow the redirection and ger results
+    
+    -nc,  --no-color             Enabling the --no-color will display the output without any CLI colors
 
-    -s, --silent              Enable silent mode to suppress the display of Subprober banner and version information.
-
-    -v, --verbose             Enable verbose mode to display detailed results on the console.
-
-    -cs, --concise            Enable concise mode to display only timeout or request failure URLs or subdomains.
-
-    -exs, --excluded-save     Save the results of excluded status codes when the --exclude switch is enabled.
-
-    -ums, --unmatch-save      Save the results of unmatched status codes when the --match switch is enabled.
-
-    -up, --update             Update Subprober to the latest version through pip.
-
+    -up,  --update               Update Subprober to the latest version through pip and git.
+    
 [INFO]:
 
-    subprober -f subdomains.txt -o output.txt -tl -wc -sv -v -apt -wc -ex 404 500 -suo 200 -v -o output.txt -c 
+    subprober -f subdomains.txt -o output.txt -tl -wc -sv -v -apt -wc -ex 404 500 -suo 200 -v -o output.txt -c 20
     
     subprober -u https://example.com -c 20 -to 8  -tl -sv  -wc -apt -ex 404 500 -suo 200 -v -o output.txt
     
     cat subdomains.txt | subprober -c 20 -to 8 -tl -sv -wc -apt -ex 404 500 -suo 200 -v -o output.txt
+    
+[NOTE]:
+
+
+    - Important Note Subprober new version is highly built in with concurrent so please be sure with your concurrency value
+      because high concurrency values will cause race condition.
+      
+    - Subprobers recommended concurrency value is between the range from 15-100 for accuracy and high concurrent performance.
 
 ```
 
@@ -129,52 +139,6 @@ subprober -u https://example.com -c 20 -to 8 -tl -sv -wc -apt -ex 404 500 -suo 2
 ```bash
 cat subdomains.txt | subprober -c 20 -to 8 -tl -sv -wc -apt -ex 404 500 -suo 200 -v -o output.txt
 ```
-
-## Flags and Options
-
-### Basic Flags
-
-- **-f, --filename**: Specify the filename containing a list of subdomains for targeted probing.
-
-- **-h, --help**: Show the help message and exit.
-
-- **-u, --url**: Specify a target URL for direct probing.
-
-- **-sp, --show-progress**: Enable show progress mode to display a progress bar.
-
-- **-o, --output**: Define the output filename to store the results.
-
-### Advanced Flags
-
-- **-c, --concurrency**: Set the concurrency level for multiple processes. Default is 10.
-
-- **-tl, --title**: Retrieve and display the title of subdomains.
-
-- **-to, --timeout**: Set a custom timeout value for sending requests.
-
-- **-sv, --server**: Identify and display the server information associated with subdomains.
-
-- **-wc, --word-count**: Retrieve and display the content length of subdomains.
-
-- **-apt, --application-type**: Determine and display the application type of subdomains.
-
-- **-ex, --exclude**: Exclude specific response status code(s) from the analysis.
-
-- **-mc, --match**: Specify specific response status code(s) to include in the analysis.
-
-- **-suo, --save-urls-only**: Save only URLs for particular status codes, excluding other information.
-
-- **-s, --silent**: Enable silent mode to suppress the display of Subprober banner and version information.
-
-- **-v, --verbose**: Enable verbose mode to display detailed results on the console.
-
-- **-cs, --concise**: Enable concise mode to display only timeout or request failure URLs or subdomains.
-
-- **-exs, --excluded-save**: Save the results of excluded status codes when the --exclude switch is enabled.
-
-- **-ums, --unmatch-save**: Save the results of unmatched status codes when the --match switch is enabled.
-
-- **-up, --update**: Update Subprober to the latest version through pip.
 
 ### License
 

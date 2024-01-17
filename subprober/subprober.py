@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-import httpx 
+import asyncio
+import aiohttp
+import aiofiles
 import os  
 from colorama import Fore,Back,Style
 import argparse
-import concurrent.futures 
 import requests
 from bs4 import BeautifulSoup
 import time as t
@@ -11,8 +12,16 @@ import warnings
 import random
 from alive_progress import alive_bar
 import sys
-
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+import urllib3
+from aiohttp import client_exceptions
 requests.packages.urllib3.disable_warnings()
+import platform
+import resource
+
+
+
+locks = asyncio.Lock()
 
 red =  Fore.RED
 
@@ -38,11 +47,16 @@ colors = [ green, cyan, blue]
 
 random_color = random.choice(colors)
 
-def help_me():
+url_list = []
+
+results = []
+
+
+async def help_me():
     
     print(f"""
           
-{bold}{white}Subprober - A Fast Probing Tool for Penetration testing
+{bold}{white}Subprober - An essential HTTP multiple Probing Tool for Penetration testers and Bug Bounty Hunters
 
 {bold}[{bold}{blue}Description{reset}] :
 
@@ -50,59 +64,69 @@ def help_me():
 
 {bold}[{bold}{blue}Flags{reset}]:{reset}{bold}{white}
 
-    -f, --filename            Specify the filename containing a list of subdomains for targeted probing. 
-                              This flag is used to find and analyze status codes and other pertinent details.
+    -f,   --filename              Specify the filename containing a list of subdomains for targeted probing. 
+                                 This flag is used to find and analyze status codes and other pertinent details.
                       
-    -h, --help                Show this help message for you and exit!
+    -h,   --help                Show this help message for you and exit!
     
-    -u, --url                 Specify a target URL for direct probing. This flag allows for the extraction of 
-                              status codes and other valuable information.
-                      
-    -sp. --show-progress      Enable show prgress mode which will show the progress of the Subprober with progress bar like this ( example: |████████████████████████████████████████| 4000/4000 [100%] in 12.4s (3.23/s) ).
+    -u,   --url                 Specify a target URL for direct probing. This flag allows for the extraction of 
+                                 status codes and other valuable information.
 
+    -o,   --output              Define the output filename to store the results of the probing operation.
 
-    -o, --output              Define the output filename to store the results of the probing operation.
+    -c,   --concurrency          Set the concurrency level for multiple processes. Default is 10.
 
-    -c, --concurrency         Set the concurrency level for multiple processes. Default is 10.
+    -tl,  --title                Retrieve and display the title of subdomains.
 
-    -tl, --title              Retrieve and display the title of subdomains.
+    -to,  --timeout              Set a custom timeout value for sending requests.
 
-    -to, --timeout            Set a custom timeout value for sending requests.
+    -sv,  --server               Identify and display the server information associated with subdomains.
 
-    -sv, --server             Identify and display the server information associated with subdomains.
+    -wc,  --word-count           Retrieve and display the content length of subdomains.
 
-    -wc, --word-count         Retrieve and display the content length of subdomains.
+    -apt, --application-type     Determine and display the application type of subdomains.
 
-    -apt, --application-type  Determine and display the application type of subdomains.
+    -ex,  --exclude              Exclude specific response status code(s) from the analysis.
 
-    -ex, --exclude            Exclude specific response status code(s) from the analysis.
+    -mc,  --match                Specify specific response status code(s) to include in the analysis.
 
-    -mc, --match              Specify specific response status code(s) to include in the analysis.
+    -s,   --silent               Enable silent mode to suppress the display of Subprober banner and version information.
 
-    -suo, --save-urls-only    Save only URLs for particular status codes, excluding other information.
+    -v,   --verbose              Enable verbose mode to display error results on the console.
+    
+    -p,   --path                 Specify a path for probe and get results ex:: -p admin.php
+    
+    -px,  --proxy                Specify a proxy to send the requests through your proxy or BurpSuite ex: 127.0.0.1:8080
+    
+    -gw,  --grep-word            Enable The grep word flag will be usefull when grepping partiuclar codes like for 200: OK ---> cat subprober-results.txt | grep OK 
+                                 This will show the results with 200-299 range codes
+                                 
+    -ar,  --allow-redirect       Enabling these flag will make Subprober to follow the redirection and ger results
+    
+    -nc,  --no-color             Enabling the --no-color will display the output without any CLI colors
 
-    -s, --silent              Enable silent mode to suppress the display of Subprober banner and version information.
-
-    -v, --verbose             Enable verbose mode to display detailed results on the console.
-
-    -cs, --concise            Enable concise mode to display only timeout or request failure URLs or subdomains.
-
-    -exs, --excluded-save     Save the results of excluded status codes when the --exclude switch is enabled.
-
-    -ums, --unmatch-save      Save the results of unmatched status codes when the --match switch is enabled.
-
-    -up, --update             Update Subprober to the latest version through pip.{reset}
-
+    -up,  --update               Update Subprober to the latest version through pip and git.
+    {reset}
 {bold}{white}[{bold}{blue}INFO{reset}]:{bold}{white}
 
-    subprober -f subdomains.txt -o output.txt -tl -wc -sv -v -apt -wc -ex 404 500 -suo 200 -v -o output.txt -c 
+    subprober -f subdomains.txt -o output.txt -tl -wc -sv -v -apt -wc -ex 404 500 -suo 200 -v -o output.txt -c 20
     
     subprober -u https://example.com -c 20 -to 8  -tl -sv  -wc -apt -ex 404 500 -suo 200 -v -o output.txt
     
-    cat subdomains.txt | subprober -c 20 -to 8 -tl -sv -wc -apt -ex 404 500 -suo 200 -v -o output.txt
+    cat subdomains.txt | subprober -c 20 -to 8 -tl -sv -wc -apt -ex 404 500 -suo 200 -v -o output.txt{reset}
+    
+{bold}{white}[{bold}{red}NOTE{reset}]:{bold}{white}
+
+
+    - Important Note Subprober new version is highly built in with concurrent so please be sure with your concurrency value
+      because high concurrency values will cause race condition.
+      
+    - Subprobers recommended concurrency value is between the range from 15-100 for accuracy and high concurrent performance.
+    
+
     {reset}""")
     
-    exit()
+    quit()
 
 
 
@@ -122,27 +146,17 @@ banner = f'''
                                                                          
                                                   '''
                                                   
-                                                  
-url_list = []
-
-url_list = list(set(url_list))
-
-
-
-
 parser = argparse.ArgumentParser(add_help=False)
 
 parser.add_argument("-f", "--filename",  type=str)
 
 parser.add_argument("-h", "--help", action="store_true")
 
-parser.add_argument("-sp", "--show-progress", action="store_true")
-
 parser.add_argument("-u", "--url",  type=str )
 
 parser.add_argument("-o", "--output", type=str)
 
-parser.add_argument("-c", "--concurrency", type=int, default=10)
+parser.add_argument("-c", "--concurrency", type=int, default=50)
 
 parser.add_argument("-tl", "--title", action="store_true")
 
@@ -158,17 +172,19 @@ parser.add_argument("-ex", "--exclude",  type=str, nargs="*")
 
 parser.add_argument("-mc", "--match",  type=str, nargs="*")
 
-parser.add_argument("-suo", "--save-urls-only", type=str, nargs="*") 
-
 parser.add_argument("-s", "--silent", action="store_true")
 
 parser.add_argument("-v", "--verbose", action="store_true")
 
-parser.add_argument("-cs", "--concise",  action="store_true")
+parser.add_argument("-p", "--path", type=str)
 
-parser.add_argument("-exs", "--excluded-save",  action="store_true")
+parser.add_argument("-px", "--proxy", type=str)
 
-parser.add_argument("-ums", "--unmatch-save", action="store_true")
+parser.add_argument("-gw", "--grep-word", action="store_true")
+
+parser.add_argument("-ar", "--allow-redirect", action="store_true")
+
+parser.add_argument("-nc", "--no-color", action="store_true")
 
 parser.add_argument("-up", "--update", action="store_true")
 
@@ -178,642 +194,418 @@ args = parser.parse_args()
 
 def get_version():
     
-    version = "v1.0.3"
+    
+    version = "v1.0.4"
     
     url = f"https://api.github.com/repos/sanjai-AK47/Subprober/releases/latest"
     
     try:
-        
-        
-        
-        response = requests.get(url, verify=False, timeout=10)
-        
-        if response.status_code == 200:
             
-            data = response.json()
+                response =  requests.get(url, timeout=10)
+        
+                if response.status_code == 200:
             
-            latest = data.get('tag_name')
+                    
+                    data = response.json()
+                
+                    latest = data.get('tag_name')
             
-            if latest == version:
+                    if latest == version:
                 
-                message = "latest"
+                        message = "latest"
                 
-                print(f"[{blue}Version{reset}]: Subprober current version {version} ({green}{message}{reset})")
+                        print(f"[{blue}Version{reset}]: {bold}{white}Subprober current version {version} ({green}{message}{reset})")
                 
-                t.sleep(1)
+                        t.sleep(1)
                 
+                    else:
+                
+                        message ="outdated"
+                
+                        print(f"[{blue}Version{reset}]: {bold}{white}Subprober current version {version} ({red}{message}{reset})")
+                
+                        t.sleep(1)
+                
+                else:
+            
+                    pass
+            
+            
+        
+    except KeyboardInterrupt as e:
+        
+        print(f"[{blue}INFO{reset}]: {bold}{white}Subprober says BYE!{reset}")
+        
+        quit()
+        
+                
+    except Exception as e:
+        
+        pass
+        
+        
+def limit_extender(): #CodeToHandleTheOsErrorForTooManyFile
+    
+    try:
+        
+        soft , hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+        
+        new = 1000000
+        
+        osname = platform.system()
+        
+        if osname == "Linux" or  osname == "Darwin":
+            
+            resource.setrlimit(resource.RLIMIT_NOFILE, (new, hard))
+            
+    except KeyboardInterrupt as e:
+        
+        quit()
+        
+    except Exception as e:
+        
+        pass
+            
+            
+        
+async def save(url, args):
+    
+    try:
+        
+        
+            if args.output:
+        
+        
+            
+                if os.path.isfile(args.output):
+                
+                    filename = args.output
+                
+                elif os.path.isdir(args.output):
+                
+                    filename = os.path.join(args.output, f"subprober_results.txt")
+                
+                else:
+                
+                    filename = args.output
+            
             else:
                 
-                message ="outdated"
-                
-                print(f"[{blue}Version{reset}]: Subprober current version {version} ({red}{message}{reset})")
-                
-                t.sleep(1)
-                
-        else:
+                filename = "subprober_results.txt"
             
-            pass
         
+            async with aiofiles.open(filename, "a") as w:
+                
+                await w.write(url + '\n')
+
     except KeyboardInterrupt as e:
         
-        print(f"[{blue}INFO{reset}]: Subprober says BYE!")
         
-        exit()
+        print(f"\n[{bold}{blue}INFO{reset}]: {bold}{white}Probuster exits..{reset}")
         
-                
-    except Exception as e:
+        quit()
         
-        pass
-    
-def Im_here():
-    
-    try:
+    except asyncio.CancelledError as e:
         
-        if args.show_progress:
         
-            with alive_bar(len(url_list), enrich_print=False) as bar:
+        print(f"\n[{bold}{blue}INFO{reset}]: {bold}{white}Probuster exits..{reset}\n")
         
-                with concurrent.futures.ThreadPoolExecutor(max_workers=args.concurrency) as executor:
-            
-                    futures = [executor.submit(send_request, url) for url in url_list]
-            
-                    for futures in concurrent.futures.as_completed(futures):
-            
-                        bar()
-        else:
-            
-            with concurrent.futures.ThreadPoolExecutor(max_workers=args.concurrency) as executor:
-            
-                futures = [executor.submit(send_request, url) for url in url_list]
-                
-            concurrent.futures.wait(futures)
-                
-    except KeyboardInterrupt as e:
+        quit()
         
-        print(f"[{blue}INFO{reset}]: Subprober says BYE!")
         
-        exit()
-        
-    except Exception as e:
-        
-        pass
-    
-def Im_here_too():
-    
-    try:
-        
-        if args.show_progress:
-        
-            with alive_bar(len(url_list), enrich_print=False) as bar:
-        
-                with concurrent.futures.ThreadPoolExecutor(max_workers=args.concurrency) as executor:
-            
-                    futures = [executor.submit(match_me, url) for url in url_list]
-                
-                    for futures in concurrent.futures.as_completed(futures):
-                        
-                        bar()
-                        
-                        
-        else:
-                
-            with concurrent.futures.ThreadPoolExecutor(max_workers=args.concurrency) as executor:
-            
-                futures = [executor.submit(match_me, url) for url in url_list]
-                
-            concurrent.futures.wait(futures)
-                
-                         
-                        
-             
-        
-    except KeyboardInterrupt as e:
-        
-        print(f"[{blue}INFO{reset}]: Subprober says BYE!")
-        
-        exit()
         
     except Exception as e:
         
         pass
     
     
-def match_me(url) :
+    
+    
+async def probe(url, args, session, sem, bar):
     
     
     try:
-        
-        timeout= args.timeout if args.timeout else 10
-   
-        response = requests.get(url, verify=False, timeout=timeout)
-            
-        server1 =  response.headers.get("server")
-        
-        content_type = response.headers.get("Content-Type")
-        
-        if content_type:
-            
-            content_type = content_type.split(";")[0].strip()
-            
-            
-        with warnings.catch_warnings():
-                
-                
-                warnings.filterwarnings("ignore", category=UserWarning, module="bs4")
-            
-                soup = BeautifulSoup(response.content, "html.parser")
     
-                text = soup.get_text() 
-    
-    
-        word_count = len(text.split())  
-            
-        title = soup.title.string
+        async with sem:
         
-        server = server1 if args.server else ""
+            warnings.filterwarnings("ignore", category=ResourceWarning)
+            
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+            
+            requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+            
+            
+            proxies = {
+                "http": args.proxy,
+                "https": args.proxy
+            } if args.proxy else None
+            
+            timeout = args.timeout if args.timeout else 10
+            
+            redirect = True if args.allow_redirect else False
+            
+            async with session.get(url, ssl=False, proxy=proxies, timeout=timeout, allow_redirects=redirect) as response:
                 
-        content = content_type if args.application_type else ""
                 
-        word =  word_count if args.word_count else ""
+                response_text = await response.content.read()
+                
+                server1 =  response.headers.get("server")
+                
+                server = server1 if server1 else "None"
         
-        title = title if args.title else ""
+                content_type = response.headers.get("Content-Type")
+                
         
-        if str(response.status_code) in args.match:
+                if content_type:
             
-            if response.status_code >1 and response.status_code <= 299   :
+                        content_type = content_type.split(";")[0].strip()
             
-                result = f"{bold}{white}{url}[{bold}{green}{response.status_code}{reset}][{bold}{magenta}{server}{reset}][{bold}{yellow}{content}{reset}][{bold}{cyan}{title}{reset}][{cyan}{word}{reset}]"
+            
+                with warnings.catch_warnings():
+                
+                
+                    warnings.filterwarnings("ignore", category=UserWarning, module="bs4")
+            
+                    soup = BeautifulSoup(response_text, "html.parser")
+    
+                    text = soup.get_text() 
+                    
+    
+                word_count = len(text.split())  
+            
+                title_tag = soup.title
+                
+                title = title_tag.string if title_tag else ""
+                
+                
+                if not args.no_color:
+                    
+                    server = f"{bold}{white}[{reset}{bold}{white}{reset}{bold}{magenta}{server}{reset}{bold}{white}]{reset} " if args.server else ""
+                    
+                else:
+                    
+                    server = f"[{server}] " if args.server else ""
+                    
+                if not args.no_color:
+                    
+                    content = f"{bold}{white}[{reset}{bold}{yellow}{content_type}{reset}{bold}{white}]{reset}" if args.application_type else ""
+                    
+                else:
+                    
+                    content = f"[{content_type}]" if args.application_type else ""
+                    
+                if not args.no_color:
+                    
+                    word =  f"{bold}{white}[{reset}{bold}{green}{word_count}{reset}{bold}{white}]{reset}" if args.word_count else ""
+                    
+                else:
+                    
+                    word =  f"[{word_count}]" if args.word_count else ""
+                    
+                if not args.no_color:
+        
+                    title = f"{bold}{white}[{reset}{bold}{cyan}{title}{reset}{bold}{white}]{reset}" if args.title else ""
+                    
+                else:
+                    
+                    title = f"[{title}]" if args.title else ""
+                       
+                
+                if response.status >=200 and response.status <=299:
+                    
+                    if not args.no_color:
+                    
+                        status =f"{bold}{white}[{reset}{bold}{bold}{green}{response.status}{reset}{bold}{white}]{reset}"
+                        
+                    else:
+                        
+                        status =f"[{response.status}]"
+                        
+                    
+                elif response.status >= 300 and response.status <=399:
+                    
+                    if not args.no_color:
+                    
+                        status =f"{bold}{white}[{reset}{bold}{bold}{yellow}{response.status}{reset}{bold}{white}]{reset}"
+                        
+                    else:
+                        
+                        status =f"[{response.status}]"
+                    
+                else:
+                    
+                    if not args.no_color:
+                        
+                        status =f"{bold}{white}[{reset}{bold}{red}{response.status}{reset}{bold}{white}]{reset}"
+                        
+                    else:
+                        
+                        status =f"[{response.status}]"
+                        
+                
+                if response.status >=200 and response.status <=299:
+                    
+                    if args.grep_word:
+                    
+                        if not args.no_color:
+                        
+                            grep =f"{bold}{white}[{reset}{bold}{green}OK{reset}{bold}{white}]{reset}"
+                        
+                        else:
+                        
+                            grep =f"[OK]"
+                        
+                    
+                elif response.status >= 300 and response.status <=399:
+                    
+                     if args.grep_word:
+                    
+                        if not args.no_color:
+                        
+                            grep =f"{bold}{white}[{reset}{bold}{cyan}RD{reset}{bold}{white}]{reset}"
+                        
+                        else:
+                        
+                            grep =f"[RD]"
+                    
+                else:
+                    
+                    if args.grep_word:
+                    
+                        if not args.no_color:
+                        
+                            grep =f"{bold}{white}[{reset}{bold}{red}ER{reset}{bold}{white}]{reset}"
+                        
+                        else:
+                        
+                            grep =f"[ER]" 
                             
-            if response.status_code >299 and response.status_code <= 399 :
-            
-                result = f"{bold}{white}{url}[{bold}{yellow}{response.status_code}{reset}][{bold}{magenta}{server}{reset}][{bold}{yellow}{content}{reset}][{bold}{cyan}{title}{reset}][{cyan}{word}{reset}]"
+                gword = grep if args.grep_word else ""
                 
-            if response.status_code > 399 and response.status_code <= 1000:
-            
-                result = f"{bold}{white}{url}[{bold}{red}{response.status_code}{reset}][{bold}{magenta}{server}{reset}][{bold}{yellow}{content}{reset}][{bold}{cyan}{title}{reset}][{cyan}{word}{reset}]" 
                         
-            if args.verbose:
-                
-                print(result)
-                
-                if args.save_urls_only:
+                if not args.no_color:
+                 
+                    url = f"{bold}{white}{url}{reset}"
                     
-                    if str(response.status_code) in args.save_urls_only:
-                                
-                                save_url_only(url)
-                                
-                elif not args.save_urls_only:
-                                
-                                save(result)
-                
-            if not args.verbose:
-                
-                if args.save_urls_only:
+                else:
                     
-                    if str(response.status_code) in args.save_urls_only:
-                                
-                                save_url_only(url)
-                                
-                elif not args.save_urls_only:
-                                
-                                save(result)
+                    url = f"{url}"
+                    
                 
-        if args.match and args.unmatch_save:
-            
-            if str(response.status_code) not in args.match:
                 
-                if str(response.status_code) in args.match:
+                if args.exclude and str(response.status) in args.exclude:
+                
+                    pass
+                
+                if not args.exclude  and not args.match:
+                    
             
-                    if response.status_code >1 and response.status_code <= 299   :
             
-                     result = f"{bold}{white}{url}[{bold}{green}{response.status_code}{reset}][{bold}{magenta}{server}{reset}][{bold}{yellow}{content}{reset}][{bold}{cyan}{title}{reset}][{cyan}{word}{reset}]"
+                        result = f"""{url} {gword}{status}{title}{server}{content}{word}"""
+                    
+                        print(f"{result}\n")
+                
+                        await save(result, args)
+                        
+                if args.exclude  and not args.match:
+                    
+            
+                    if str(response.status) not in args.exclude:
+            
+                        result = f"""{url} {gword}{status}{title}{server}{content}{word}"""
+                    
+                        print(f"{result}\n")
+                
+                        await save(result, args)
+                                    
                             
-                if response.status_code >299 and response.status_code <= 399 :
-            
-                    result = f"{bold}{white}{url}[{bold}{yellow}{response.status_code}{reset}][{bold}{magenta}{server}{reset}][{bold}{yellow}{content}{reset}][{bold}{cyan}{title}{reset}][{cyan}{word}{reset}]"
+                if args.match and str(response.status) in args.match:
                 
-                if response.status_code > 399 and response.status_code <= 1000:
-            
-                    result = f"{bold}{white}{url}[{bold}{red}{response.status_code}{reset}][{bold}{magenta}{server}{reset}][{bold}{yellow}{content}{reset}][{bold}{cyan}{title}{reset}][{cyan}{word}{reset}]" 
-                    
-                    
-                if args.save_urls_only:
-                    
-                    if str(response.status_code) in args.save_urls_only:
-                                
-                                save_url_only(url)
-                                
-                elif not args.save_urls_only:
-                                
-                                save(result)
+                        result = f"""{url} {gword}{status}{title}{server}{content}{word}"""
                         
-                    
+                        print(f"{result}\n")
+                        
+                        await save(result, args)
+                        
+                
+                   
     except KeyboardInterrupt as e:
         
-        print(f"[{blue}INFO{reset}]: Subprober says BYE!")
+        print(f"[{blue}INFO{reset}]: {bold}{white}Subprober says BYE!{reset}")
         
-        exit()
+        quit()
         
-    except requests.RequestException as e:
+    except aiohttp.ClientConnectionError as e:
         
-        if args.concise:
+        
+        if args.verbose:
             
-            print(f"[{bold}{red}TIME-OUT{reset}]: {bold}{white}{url}{reset}")
+        
+            print(f"[{bold}{red}INFO{reset}]: {bold}{white}Client Timeout Exceeds for: {url}{reset}")
             
-        else:
             
-            pass 
+    except asyncio.TimeoutError as e:
+        
+         if args.verbose:
+            
+        
+            print(f"[{bold}{red}INFO{reset}]: {bold}{white}Client Timeout Exceeds for: {url}{reset}")
+            
+    except asyncio.CancelledError as e:
+        
+        quit()
+        
+        
         
     except Exception as e:
         
-        pass 
+        pass
+    
         
+    finally:
         
+        bar()
+    
+    
+    
+async def concurrents():
+    
+    try:
+        
+        url_lists = list(set(url_list))
+        
+        sem = asyncio.Semaphore(args.concurrency)
+        
+        async with aiohttp.ClientSession() as session:
+            
+            with alive_bar(title=f"SubProber", total=len(url_lists), enrich_print=False) as bar:
+                
+                tasks = [probe(url, args, session, sem, bar) for url in url_lists]
+                
+                await asyncio.gather(*tasks,return_exceptions=False)
+                
+    except KeyboardInterrupt as e:
+        
+        print(f"\n[{bold}{blue}INFO{reset}]: {bold}{white}Probuster exits..{reset}")
+        
+        quit()
+        
+    except asyncio.CancelledError as e:
+        
+        print(f"\n[{bold}{blue}INFO{reset}]: {bold}{white}Probuster exits..{reset}\n")
+        
+        quit()
+        
+    except Exception as e:
+        
+        pass
     
 
-    
-def send_request(url):
-    
-    try:
-        
-        
-            
-        timeout= args.timeout if args.timeout else 10
-            
-        response = requests.get(url, verify=False, timeout=timeout)
-            
-        server1 =  response.headers.get("server")
-        
-        content_type = response.headers.get("Content-Type")
-        
-        if content_type:
-            
-            content_type = content_type.split(";")[0].strip()
-            
-            
-        with warnings.catch_warnings():
-                
-                
-                warnings.filterwarnings("ignore", category=UserWarning, module="bs4")
-            
-                soup = BeautifulSoup(response.content, "html.parser")
-    
-                text = soup.get_text() 
-    
-    
-        word_count = len(text.split())  
-            
-        title = soup.title.string
-        
-        server = server1 if args.server else ""
-                
-        content = content_type if args.application_type else ""
-                
-        word =  word_count if args.word_count else ""
-        
-        title = title if args.title else ""
-                
-                     
-        
-        
-        if response.status_code >1 and response.status_code <= 299   :
-            
-            result = f"{bold}{white}{url}[{bold}{green}{response.status_code}{reset}][{bold}{magenta}{server}{reset}][{bold}{yellow}{content}{reset}][{bold}{cyan}{title}{reset}][{bold}{cyan}{word}{reset}]"
-
-            if args.verbose:
-                    
-                
-                if args.exclude:
-                    
-                    if str(response.status_code) in args.exclude:
-                        
-                        if args.excluded_save:
-                            
-                            if args.save_urls_only:
-                                
-                                if str(response.status_code) in args.save_urls_only:
-                                
-                                    save_url_only(url)
-                                
-                            elif not args.save_urls_only:
-                                
-                                save(result)
-                            
-                        else:
-                            
-                            pass
-                        
-                if not args.exclude:
-                        
-                        print(result)
-                
-                        if args.save_urls_only:
-                            
-                            if str(response.status_code) in args.save_urls_only:
-                                
-                                    save_url_only(url)
-                                
-                        elif not args.save_urls_only:
-                                
-                                save(result)
-                
-            if not args.verbose:
-                
-                if args.exclude:
-                    
-                    if str(response.status_code) in args.exclude:
-                        
-                        if args.excluded_save:
-                            
-                            if args.save_urls_only:
-                                
-                                if str(response.status_code) in args.save_urls_only:
-                                
-                                    save_url_only(url)
-                                
-                            elif not args.save_urls_only:
-                                
-                                save(result)
-                            
-                        else:
-                            
-                            pass
-                
-                if not args.exclude:
-                    
-                    if args.save_urls_only:
-                        
-                        if str(response.status_code) in args.save_urls_only:
-                                
-                                save_url_only(url)
-                                
-                    elif not args.save_urls_only:
-                                
-                                save(result)
-                
-        if response.status_code >299 and response.status_code <= 399 :
-            
-            result = f"{bold}{white}{url}[{bold}{yellow}{response.status_code}{reset}][{bold}{magenta}{server}{reset}][{bold}{yellow}{content}{reset}][{bold}{cyan}{title}{reset}][{bold}{cyan}{word}{reset}]"
-        
-            if args.verbose:
-                    
-                
-                if args.exclude:
-                    
-                    if str(response.status_code) in args.exclude:
-                        
-                        if args.excluded_save:
-                            
-                            if args.save_urls_only:
-                                
-                                if str(response.status_code) in args.save_urls_only:
-                                
-                                    save_url_only(url)
-                                
-                            elif not args.save_urls_only:
-                                
-                                save(result)
-                            
-                        else:
-                            
-                            pass
-                        
-                if not args.exclude:
-                        
-                        print(result)
-                
-                        if args.save_urls_only:
-                            
-                            if str(response.status_code) in args.save_urls_only:
-                                
-                                save_url_only(url)
-                                
-                        elif not args.save_urls_only:
-                                
-                                save(result)
-                
-            if not args.verbose:
-                
-                if args.exclude:
-                    
-                    if str(response.status_code) in args.exclude:
-                        
-                        if args.excluded_save:
-                            
-                            if args.save_urls_only:
-                                
-                                if str(response.status_code) in args.save_urls_only:
-                                
-                                    save_url_only(url)
-                                
-                            elif not args.save_urls_only:
-                                
-                                save(result)
-                            
-                        else:
-                            
-                            pass
-                
-                if not args.exclude:
-                    
-                    if args.save_urls_only:
-                        
-                        if str(response.status_code) in args.save_urls_only:
-                                
-                                save_url_only(url)
-                                
-                    elif not args.save_urls_only:
-                                
-                                save(result)
-                
-        if response.status_code > 399 and response.status_code <= 1000:
-            
-            result = f"{bold}{white}{url}[{bold}{red}{response.status_code}{reset}][{bold}{magenta}{server}{reset}][{bold}{yellow}{content}{reset}][{bold}{cyan}{title}{reset}][{bold}{cyan}{word}{reset}]"
-        
-            if args.verbose:
-                    
-                
-                if args.exclude:
-                    
-                    if str(response.status_code) in args.exclude:
-                        
-                        if args.excluded_save:
-                            
-                            if args.save_urls_only:
-                                
-                                if str(response.status_code) in args.save_urls_only:
-                                
-                                    save_url_only(url)
-                                
-                            elif not args.save_urls_only:
-                                
-                                save(result)
-                            
-                        else:
-                            
-                            pass
-                        
-                if not args.exclude:
-                        
-                        print(result)
-                
-                        if args.save_urls_only:
-                            
-                            if str(response.status_code) in args.save_urls_only:
-                                
-                                save_url_only(url)
-                                
-                        elif not args.save_urls_only:
-                                
-                                save(result)
-                
-            if not args.verbose:
-                
-                if args.exclude:
-                    
-                    if str(response.status_code) in args.exclude:
-                        
-                        if args.excluded_save:
-                            
-                            if args.save_urls_only:
-                                
-                                if str(response.status_code) in args.save_urls_only:
-                                
-                                    save_url_only(url)
-                                
-                            elif not args.save_urls_only:
-                                
-                                save(result)
-                            
-                        else:
-                            
-                            pass
-                        if args.excluded_save:
-                            
-                            if args.save_urls_only:
-                                
-                                if str(response.status_code) in args.save_urls_only:
-                                
-                                    save_url_only(url)
-                                
-                            elif not args.save_urls_only:
-                                
-                                save(result)
-                            
-                        else:
-                            
-                            pass
-                
-                if not args.exclude:
-                    
-                    if args.save_urls_only:
-                        
-                        if str(response.status_code) in args.save_urls_only:
-                                
-                                save_url_only(url)
-                                
-                    elif not args.save_urls_only:
-                                
-                                save(result)
-            
-    except KeyboardInterrupt as e:
-        
-        print(f"[{blue}INFO{reset}]: Subprober says BYE!")
-        
-        exit()
-      
-    except requests.RequestException as e:
-        
-        if args.concise:
-            
-            print(f"[{bold}{red}TIME-OUT{reset}]: {bold}{white}{url}{reset}")
-            
-        else:
-            
-            pass     
-        
-    except Exception as e:
-        
-        pass 
-            
-
-def save(url):
+async def main():
     
     try:
-    
-        if args.output:
-            
-            if os.path.isfile(args.output):
-                
-                filename = args.output
-                
-            elif os.path.isdir(args.output):
-                
-                filename = os.path.join(args.output, f"subprober_results.txt")
-                
-            else:
-                
-                filename = args.output
-                
-        if not args.output:
-            
-            filename = f"subprober_results.txt"
-            
         
-        with open(filename, "a") as w:
-            
-            w.write(url + '\n')
-            
-    except KeyboardInterrupt as e:
-        
-        print(f"[{blue}INFO{reset}]: Subprober says BYE!")
-        
-        exit()
-        
-    except Exception as e:
-        
-        pass
-    
-def save_url_only(url):
-    
-    try:
-    
-        if args.output:
-            
-            if os.path.isfile(args.output):
-                
-                filename = args.output
-                
-            elif os.path.isdir(args.output):
-                
-                filename = os.path.join(args.output, f"subprober_results.txt")
-                
-            else:
-                
-                filename = args.output
-                
-        if not args.output:
-            
-            filename = f"subprober_results.txt"
-            
-        
-        with open(filename, "a") as w:
-            
-            w.write(url + '\n')
-            
-    except KeyboardInterrupt as e:
-        
-        print(f"[{blue}INFO{reset}]: Subprober says BYE!")
-        
-        exit()
-        
-    except Exception as e:
-        
-        pass
-
-def main():
-    
-    try:
+        limit_extender()
         
         if args.url and not args.filename:
             
@@ -823,41 +615,15 @@ def main():
             
                 get_version()
                 
-            if  args.exclude and args.match:
-                
-                    print(f"[{bold}{red}FLAG-ERROR{reset}]: Please provide either --exclude or --match")
-                
-                    exit()
-            
-            if args.url and args.verbose:
-            
-                print(f"[{blue}INFO{reset}]: Verbose mode Enabled. Now Subprober console the output to you! ")
-                
-            if args.url and not args.verbose:
-                
-                print(f"[{red}INFO{reset}]: Verbose mode not Enabled. Now Subprober not console the output to you! ")
                 
             if  args.url and args.output:
 
-                print(f"[{green}INFO{reset}]: Output will be saved in {args.output}")
+                print(f"[{green}INFO{reset}]: {bold}{white}Output will be saved in {args.output}{reset}")
             
             elif  args.url and not args.output:
         
         
-                print(f"[{green}INFO{reset}]: Output will be saved in subprober_results.txt")
-
-
-            if  args.concurrency:
-            
-
-                print(f"[{green}INFO{reset}]: Concurrency Enabled by user")
-            
-
-        
-            if  not args.concurrency:
-        
-
-                print(f"[{red}INFO{reset}]: User Not defined concurrency level and Continuing with default level {args.concurrency}")
+                print(f"[{green}INFO{reset}]: {bold}{white}Output will be saved in subprober_results.txt{reset}")
                 
             
             
@@ -865,28 +631,27 @@ def main():
             
             
                 url = args.url
+                
+                path = args.path if args.path else ""
 
                 if url.startswith("https://") or url.startswith("http://"):
+                    
+                    url = f"{url}/{path}"
            
                     url_list.append(url)
              
                 elif not  url.startswith("https://") or url.startswith("http://"):
                 
-                   new_url = f"https://{url}"
+                   new_url = f"https://{url}/{path}"
                
-                   new_http = f"http://{url}"
-               
+                   new_http = f"http://{url}/{path}"
+                   
                    url_list.append(new_url)
                
                    url_list.append(new_http)
-            
-            if args.url and args.match:
+                   
                 
-                Im_here_too()
-                
-            elif args.url and not args.match:
-                
-                Im_here()
+                await concurrents()
         
         
         
@@ -898,40 +663,16 @@ def main():
             
                     get_version()
                     
-                if args.exclude and args.match:
-                
-                            print(f"[{bold}{red}FLAG-ERROR{reset}]: Please provide either --exclude or --match")
-                
-                            exit()
-            
-                if  args.verbose:
-            
-                    print(f"[{blue}INFO{reset}]: Verbose mode Enabled. Now Subprober console the output to you! ")
-                
-                if  not args.verbose:
-                
-                    print(f"[{red}INFO{reset}]: Verbose mode not Enabled. Now Subprober not console the output to you! ")
                 
                 if   args.output:
 
-                    print(f"[{green}INFO{reset}]: Output will be saved in {args.output}")
+                    print(f"[{green}INFO{reset}]: {bold}{white}Output will be saved in {args.output}{reset}")
             
                 elif  not args.output:
         
         
-                    print(f"[{green}INFO{reset}]: Output will be saved in subprober_results.txt")
-        
-                if  args.concurrency:
-            
-
-                    print(f"[{green}INFO{reset}]: Concurrency Enabled by user")
-            
-
-        
-                if  not args.concurrency:
-        
-
-                    print(f"[{red}INFO{reset}]: User Not defined concurrency level and Continuing with default level {args.concurrency}")
+                    print(f"[{green}INFO{reset}]: {bold}{white}Output will be saved in subprober_results.txt{reset}")
+                    
                     
                 if args.filename and not args.url:
                     
@@ -939,16 +680,20 @@ def main():
                     try:
                     
                         filename = args.filename
+                        
                     
                         with open(filename, "r") as urls:
                         
                             lists = urls.read().splitlines()
                             
-                        
+                        path = args.path if args.path else ""
                         
                         for url in lists:
+                            
+                            url = f"{url}/{path}"
                         
                             if url.startswith("https://") or url.startswith("http://") :
+                                
                         
                                 url_list.append(url)
                             
@@ -962,103 +707,98 @@ def main():
                                 
                                 url_list.append(new_http)
                                 
-                        if args.match:
-                
-                            Im_here_too()
-                
-                        elif not args.match:
-                
-                            Im_here()
-                
-                        
-                        
-                        
-                        
+                        await concurrents()
+                                
+                                
                     except FileNotFoundError as e:
                     
-                        print(f"[{red}INFO{reset}]: {args.filename} not found. please check the file or file path exist or not!")
+                        print(f"[{red}INFO{reset}]: {bold}{white}{args.filename} not found. please check the file or file path exist or not!{reset}")
+                        
+                        quit()
                         
                     except Exception as e:
                         
                         pass
-                        
-        
+                    
+                    
         if args.update:
             
-            version = "v1.0.3"
+                version = "v1.0.3"
     
-            url = f"https://api.github.com/repos/sanjai-AK47/Subprober/releases/latest"
+                url = f"https://api.github.com/repos/sanjai-AK47/Subprober/releases/latest"
     
-            try:
+                try:
         
-        
-                response = requests.get(url)
-        
-                if response.status_code == 200:
-            
-                    data = response.json()
-            
-                    latest = data.get('tag_name')
-            
-                    if latest == version:
-                
-                
-                        print(f"[{bold}{blue}Version{reset}]: {bold}{white}Subprober already in latest version dont worry :){reset}")
-                
-                        t.sleep(1)
+                    async with aiohttp.ClientSession() as req:
                         
-                        exit()
-                
-                    else:
-                        
-                        try:
-                            
-                            print(f"[{bold}{blue}UPDATE{reset}]: {bold}{white}Updating the Subprober{reset}")
-                
-                            os.system("pip install --upgrade subprober")
-                            
-                            print(f"[{bold}{blue}INFO{reset}]: {bold}{white}Please check whether Subprober updated to latest version or update it through manually{reset}")
-                            
-                            exit()
-                            
-                            
-                        except Exception as e:
-                            
-                            print(f"[{bold}{blue}INFO{reset}]: {bold}{white}Subprober update failed due to some error{reset}")
-                            
-                            exit()
-                
-                else:
+                        async with req.get(url) as response:
+
+                            if response.status == 200:
             
-                    print(f"[{bold}{blue}INFO{reset}]: {bold}{white}Subprober update failed due to some error{reset}")
-                    
-                    exit()
-                    
-            except KeyboardInterrupt as e:
-        
-                print(f"[{blue}INFO{reset}]: Subprober says BYE!")
-        
-                exit()
-        
-            except httpx.TimeoutException as e:
-        
-                print(f"[{bold}{blue}INFO{reset}]: {bold}{white}Subprober update failed due to failed to reach Subprober Repository please report this issue{reset}")
-        
-                exit()
+                                data = await response.json()
+                            
+                                latest = data.get('tag_name')
+            
+                                if latest == version:
                 
-            except Exception as e:
                 
-                print(f"[{bold}{blue}INFO{reset}]: {bold}{white}Subprober update failed due to failed to reach Subprober Repository please report this issue{reset}")
+                                    print(f"[{bold}{blue}Version{reset}]: {bold}{white}Subprober already in latest version dont worry :){reset}")
+                
+                                    t.sleep(1)
+                        
+                                    quit()
+                
+                                else:
+                        
+                                    try:
+                            
+                                        print(f"[{bold}{blue}UPDATE{reset}]: {bold}{white}Updating the Subprober{reset}")
+                
+                                        os.system("pip install git+https://github.com/sanjai-AK47/Subprober.git")
+                            
+                                        print(f"[{bold}{blue}INFO{reset}]: {bold}{white}Please check whether Subprober updated to latest version or update it through manually{reset}")
+                            
+                                        quit()
+                            
+                            
+                                    except Exception as e:
+                            
+                                        print(f"[{bold}{blue}INFO{reset}]: {bold}{white}Subprober update failed due to some error{reset}")
+                            
+                                        quit()
+                
+                            else:
+            
+                                print(f"[{bold}{blue}INFO{reset}]: {bold}{white}Subprober update failed due to some error{reset}")
+                    
+                                quit()
+                    
+                except KeyboardInterrupt as e:
+        
+                    print(f"[{blue}INFO{reset}]: {bold}{white}Subprober says BYE!{reset}")
+        
+                    quit()
+        
+                except aiohttp.TimeoutError as e:
+        
+                    print(f"[{bold}{blue}INFO{reset}]: {bold}{white}Subprober update failed due to failed to reach Subprober Repository please report this issue{reset}")
+        
+                    quit()
+                
+                except Exception as e:
+                
+                    print(f"[{bold}{blue}INFO{reset}]: {bold}{white}Subprober update failed due to failed to reach Subprober Repository please report this issue{reset}")
        
-                exit()
-                
+                    quit()
+                    
+                    
         if args.help:
             
             print(f"{bold}{random_color}{banner}{reset}", file=sys.stderr)
             
-            help_me()
-          
-                    
+            await help_me()
+            
+            
         if not args.filename and not args.url:
             
             try:
@@ -1067,15 +807,23 @@ def main():
                     
                     print(f"{bold}{random_color}{banner}{reset}")
             
+                    
                     get_version()
+                    
+                path = args.path if args.path else ""
                 
                 for line in sys.stdin:
                       
-                      url = line.strip()
+                      url = f"{line.strip()}/{path}"
                       
                       if url.startswith("https://") or url.startswith("http://"):
                           
-                             url_list.append(url)
+                        
+                          
+                          
+                        url_list.append(url)
+                        
+                        
                       else:
                          
                           new_url = f"https://{url}"
@@ -1086,41 +834,41 @@ def main():
                           
                           url_list.append(new_http)
                           
-                if args.match:
-                
-                    Im_here_too()
-                
-                elif  not args.match:
-                
-                    Im_here()
-                
-                elif  args.exclude and args.match:
-                
-                    print(f"[{bold}{red}FLAG-ERROR{reset}]: Please provide either --exclude or --match")
-                
-                    exit()
-                          
+                await concurrents()
+            
             except KeyboardInterrupt as e:
                 
-                   print(f"[{blue}INFO{reset}]: Subprober says BYE!")
+                
+                   print(f"[{blue}INFO{reset}]: {bold}{white}Subprober says BYE!{reset}")
                    
-                   exit()
+                   
+                   quit()
+                   
                    
             except Exception as e:
                 
-                   print(f"[{blue}INFO{reset}]: Stdin Error occured for Subprober")
-                   
-                   exit()
-            
+                   pass
+               
     except KeyboardInterrupt as e:
         
-        print(f"[{blue}INFO{reset}]: Subprober says BYE!")
+        
+        print(f"[{blue}INFO{reset}]: {bold}{white}Subprober says BYE!{reset}")
+        
+        
+    except asyncio.CancelledError as e:
+        
+        quit()
         
     except Exception as e:
         
         print(f"[{blue}INFO{reset}]:Unknow error occured due to : {e}, please report this issue in Subprober github page")
-
-if __name__ == "__main__" :
+        
+        quit()
+        
+        
+if __name__ == "__main__":
     
-    main() 
+    asyncio.run(main())
+    
+    
     

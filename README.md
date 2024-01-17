@@ -10,6 +10,7 @@ Subprober v1.0.4 is a powerful and efficient tool designed for penetration teste
 - Subprober Concurrency and Accuracy are Improved with libraries like aiohttp,asyncio
 - Subprober Error handling and Synchronization are improved
 - Resolved some Bugs for Subprober
+- Subprober Commands are changed with usefull flags
 
 ### Installation and Updates
 

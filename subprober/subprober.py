@@ -109,11 +109,9 @@ async def help_me():
     {reset}
 {bold}{white}[{bold}{blue}INFO{reset}]:{bold}{white}
 
-    subprober -f subdomains.txt -o output.txt -tl -wc -sv -v -apt -wc -ex 404 500 -suo 200 -v -o output.txt -c 20
+    subprober -f filename.txt -c 20 --title --server --application-type --word-count -o output.txt
     
-    subprober -u https://example.com -c 20 -to 8  -tl -sv  -wc -apt -ex 404 500 -suo 200 -v -o output.txt
-    
-    cat subdomains.txt | subprober -c 20 -to 8 -tl -sv -wc -apt -ex 404 500 -suo 200 -v -o output.txt{reset}
+    cat subdomains.txt | subprober -c 20 -to 8 -tl -sv -wc -apt -ex 404 500  -o output.txt{reset}
     
 {bold}{white}[{bold}{red}NOTE{reset}]:{bold}{white}
 

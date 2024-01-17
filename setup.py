@@ -2,18 +2,20 @@ from setuptools import setup, find_packages
 
 setup(
     name='subprober',
-    version='1.0.3',
+    version='1.0.4',
     author='D. Sanjai Kumar',
     author_email='bughunterz0047@gmail.com',
-    description='Subprober - A Fast Probing Tool for Penetration testing',
+    description='Subprober - A Fast Probing Tool for Penetration testers and Bug Bounty Hunters',
     packages=find_packages(),
     install_requires=[
-        'colorama>=0.4.4',
+        'aiofiles>=23.2.1',
+        'aiohttp>=3.8.6' ,
+        'alive_progress>=3.1.4' ,
+        'beautifulsoup4>=4.11.1' ,
+        'colorama>=0.4.6' ,
         'httpx>=0.25.0',
-        'requests>=2.31.0',
-        'argparse>=1.4.0',
-        'beautifulsoup4>=4.11.1',
-        'alive_progress>=3.1.4',
+        'Requests>=2.31.0' ,
+        'urllib3>=1.26.18'
     ],
     entry_points={
         'console_scripts': [

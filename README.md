@@ -126,19 +126,19 @@ Subprober - An essential HTTP multiple Probing Tool for Penetration testers and 
 #### Basic Usage
 
 ```bash
-subprober -f subdomains.txt -o output.txt -tl -wc -sv -v -apt -wc -ex 404 500 -suo 200 -v -o output.txt -c
+subprober -f subdomains.txt -o output.txt -tl -wc -sv  -apt -wc -ex 500 -v -o output.txt -c 20
 ```
 
 ### Direct URL Probing
 
 ```bash
-subprober -u https://example.com -c 20 -to 8 -tl -sv -wc -apt -ex 404 500 -suo 200 -v -o output.txt
+subprober -u https://example.com -c 20 -to 8 -tl -sv -wc -apt -ex 500 -o output.txt
 ```
 
 ### Piping Subdomains
 
 ```bash
-cat subdomains.txt | subprober -c 20 -to 8 -tl -sv -wc -apt -ex 404 500 -suo 200 -v -o output.txt
+cat subdomains.txt | subprober -c 20 -to 8 -tl -sv -wc -apt -ex 50 -o output.txt
 ```
 
 ### License

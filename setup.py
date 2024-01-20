@@ -13,7 +13,7 @@ setup(
         'alive_progress>=3.1.4' ,
         'beautifulsoup4>=4.11.1' ,
         'colorama>=0.4.6' ,
-        'httpx>=0.25.0',
+        'httpx==0.25.0',
         'Requests>=2.31.0' ,
         'urllib3>=1.26.18'
     ],

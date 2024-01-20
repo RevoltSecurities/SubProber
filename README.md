@@ -12,6 +12,7 @@ Subprober v1.0.5 is a powerful and efficient tool designed for penetration teste
 - Resolved some Bugs for Subprober
 - Subprober Commands are changed with usefull flags
 - Resolved executive errors in v1.0.4
+- Subprober requires python version 3.11.x
 
 ### Installation and Updates
 
@@ -37,7 +38,15 @@ pip install git+https://github.com/sanjai-AK47/Subprober.git
 subprober -h
 ```
 
-Subprober requires python version 3.11.x
+
+### Recommended Concurrencies:
+
+**Info:** Subprober is improved with higher concurrency and accuracy for probings and recommend the users to use the concurrencies less which is efficient and accurate for probing
+  - 30-50   : this range of concurrency can be given when probing for more than 50K+ Subdomains, ips, domains etc..
+  - 50-80   : this range of concurrency can be given when probing for more than 100K+ Subdomains, ips, domains etc..
+  - 100-120 : this range of concurrency can be given when probing for more than 150K+ Subdomains, ips, domains etc..
+
+Note higher concurrency values may results in inaccurate results because subprober builded with higher concurrency and more accurate than other probing tool with following mentioned concurrency values
 
 ### Usage
 

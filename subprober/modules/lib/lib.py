@@ -94,7 +94,7 @@ async def help_me():
 
     -v,   --verbose              Enable verbose mode to display error results on the console.
     
-    -p,   --path                 Specify a path for probe and get results ex:: -p admin.php
+    -p,   --path                 Specify a path for probe and get results ex: -p well-know.json
     
     -px,  --proxy                Specify a proxy to send the requests through your proxy or BurpSuite ex: 127.0.0.1:8080
     

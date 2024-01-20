@@ -1,16 +1,17 @@
-# Subprober v1.0.4 - Fast Probing Tool for Penetration Testing
+# Subprober v1.0.5 - Fast Probing Tool for Penetration Testing
 
 ![GitHub last commit](https://img.shields.io/github/last-commit/sanjai-AK47/Subprober) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/sanjai-AK47/Subprober) [![GitHub license](https://img.shields.io/github/license/sanjai-AK47/Subprober)](https://github.com/sanjai-AK47/Subprober/blob/main/LICENSE) [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/d-sanjai-kumar-109a7227b/)
 
 ### Overview
 
-Subprober v1.0.4 is a powerful and efficient tool designed for penetration testers and security professionals. This release introduces several enhancements, bug fixes, and new features to elevate your subdomain probing experience. Subprober facilitates fast and reliable information extraction, making it an invaluable asset for penetration testing workflows.
+Subprober v1.0.5 is a powerful and efficient tool designed for penetration testers and security professionals. This release introduces several enhancements, bug fixes, and new features to elevate your subdomain probing experience. Subprober facilitates fast and reliable information extraction, making it an invaluable asset for penetration testing workflows.
 
-### Features in V1.0.4:
+### Features in V1.0.5:
 - Subprober Concurrency and Accuracy are Improved with libraries like aiohttp,asyncio
 - Subprober Error handling and Synchronization are improved
 - Resolved some Bugs for Subprober
 - Subprober Commands are changed with usefull flags
+- Resolved executive errors in v1.0.4
 
 ### Installation and Updates
 
@@ -29,14 +30,18 @@ cd Subprober
 pip install .
 subprober -h
 ```
+### update to v1.0.4 to v1.04.5:
 
-### Help for Subprober:
+```bash
+pip install git+https://github.com/sanjai-AK47/Subprober.git
+subprober -h
+```
+
+Subprober requires python version 3.11.x
+
+### Usage
 
 ```yaml
-subprober -h
- 
-
-
 
    _____       __    ____             __             
   / ___/__  __/ /_  / __ \_________  / /_  ___  _____
@@ -105,11 +110,9 @@ Subprober - An essential HTTP multiple Probing Tool for Penetration testers and 
     
 [INFO]:
 
-    subprober -f subdomains.txt -o output.txt -tl -wc -sv -v -apt -wc -ex 404 500 -suo 200 -v -o output.txt -c 20
+    subprober -f filename.txt -c 20 --title --server --application-type --word-count -o output.txt
     
-    subprober -u https://example.com -c 20 -to 8  -tl -sv  -wc -apt -ex 404 500 -suo 200 -v -o output.txt
-    
-    cat subdomains.txt | subprober -c 20 -to 8 -tl -sv -wc -apt -ex 404 500 -suo 200 -v -o output.txt
+    cat subdomains.txt | subprober -c 20 -to 8 -tl -sv -wc -apt -ex 404 500  -o output.txt
     
 [NOTE]:
 
@@ -120,8 +123,6 @@ Subprober - An essential HTTP multiple Probing Tool for Penetration testers and 
     - Subprobers recommended concurrency value is between the range from 15-100 for accuracy and high concurrent performance.
 
 ```
-
-### Usage Examples
 
 #### Basic Usage
 

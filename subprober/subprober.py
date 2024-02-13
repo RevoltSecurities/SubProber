@@ -1,4 +1,4 @@
-from modules.handler import *
+from .modules.handler import *
 
 def main():
     

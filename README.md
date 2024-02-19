@@ -12,6 +12,7 @@ Subprober  is a powerful and efficient tool designed for penetration testers and
 - add extra configuration in probing saving outputs
 - added new command `-dhp` `--disable-http-probe` to only probe https protocol
 - improved subprober's memory allocations
+- added deduplication that remove duplicated urls and etc..
 
 ### Installation and Updates
 

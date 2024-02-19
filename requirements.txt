@@ -1,0 +1,9 @@
+aiofiles>=23.2.1
+aiohttp>=3.9.1
+alive_progress>=3.1.4
+beautifulsoup4>=4.11.1
+httpx==0.25.0
+colorama>=0.4.6
+Requests>=2.31.0
+urllib3>=1.26.18
+anyio>=4.2.0

@@ -1,15 +1,17 @@
-# Subprober v1.0.6 - A Fast Multi-Purpose Http Probing Tool for Penetration Testing
+# Subprober v1.0.7 - A Fast Multi-Purpose Http Probing Tool for Penetration Testing
 
 ![GitHub last commit](https://img.shields.io/github/last-commit/sanjai-AK47/Subprober) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/sanjai-AK47/Subprober) [![GitHub license](https://img.shields.io/github/license/sanjai-AK47/Subprober)](https://github.com/sanjai-AK47/Subprober/blob/main/LICENSE) [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/d-sanjai-kumar-109a7227b/)
 
 ### Overview
 
-Subprober v1.0.6 is a powerful and efficient tool designed for penetration testers and security professionals. This release introduces several enhancements, bug fixes, and new features to elevate your subdomain probing experience. Subprober facilitates fast and reliable information extraction, making it an invaluable asset for penetration testing workflows.
+Subprober  is a powerful and efficient tool designed for penetration testers and security professionals. This release introduces several enhancements, bug fixes, and new features to elevate your subdomain probing experience. Subprober facilitates fast and reliable information extraction, making it an invaluable asset for penetration testing workflows.
 
-### Features in V1.0.6:
-- Subprober Concurrency and Accuracy are Improved than previous version
-- Introduced new options and probes configuration
-- Improved handling exception and increased the accuracy in results
+### Features in V1.0.7:
+- Subprober is capable to handle high loads
+- accuracy and concurrency are improved
+- add extra configuration in probing saving outputs
+- added new command `-dhp` `--disable-http-probe` to only probe https protocol
+- improved subprober's memory allocations
 
 ### Installation and Updates
 
@@ -43,6 +45,8 @@ Note higher concurrency values may results in inaccurate results because subprob
 ### Usage
 
 ```yaml
+subprober -h      
+ 
 
    _____       __    ____             __             
   / ___/__  __/ /_  / __ \_________  / /_  ___  _____
@@ -57,6 +61,7 @@ Note higher concurrency values may results in inaccurate results because subprob
                                                                          
                                                   
 
+          
 Subprober - An essential HTTP multi-purpose Probing Tool for Penetration testers
 
 [Description] :
@@ -73,6 +78,8 @@ Subprober - An essential HTTP multi-purpose Probing Tool for Penetration testers
                                       
         -u,   --url                   Specify a target URL for direct probing. This flag allows for the extraction of 
                                       status codes and other valuable information.
+                                      
+        stdin                         Subprober supports stdin input by using cat or echo command with subprober using pipe `|`
                                       
     [PROBES-CONFIG]:
 
@@ -96,6 +103,8 @@ Subprober - An essential HTTP multi-purpose Probing Tool for Penetration testers
                                                                   
         -ar,  --allow-redirect        Enabling these flag will make Subprober to follow the redirection and ger results
         
+        -dhp. --disable-http-probe    Disables the subprober from probing to http protocols and only for https when no protocol is specified
+        
     [MATCHERS]:
 
         -ex,  --exclude               Exclude specific response status code(s) from the analysis.
@@ -105,6 +114,8 @@ Subprober - An essential HTTP multi-purpose Probing Tool for Penetration testers
     [OUTPUT]:
     
         -o,   --output                Define the output filename to store the results of the probing operation.
+        
+        -das, ---disable-auto-save    Disable the autosave of the results when no output file is specified 
 
     [Rate-Limits]:
 
@@ -129,8 +140,6 @@ Subprober - An essential HTTP multi-purpose Probing Tool for Penetration testers
         -v,   --verbose               Enable verbose mode to display error results on the console.
 
         -nc,  --no-color              Enabling the --no-color will display the output without any CLI colors
-
-
 ```
 
 #### Basic Usage

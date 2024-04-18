@@ -21,7 +21,7 @@ colors = [ green, cyan, blue]
 random_color = random.choice(colors)
 
 def __version__():
-    url = f"https://api.github.com/repos/sanjai-AK47/Probuster/releases/latest"
+    url = f"https://api.github.com/repos/sanjai-AK47/Subprober/releases/latest"
     try:
         response = requests.get(url, verify=True, timeout=10)
         if response.status_code == 200:

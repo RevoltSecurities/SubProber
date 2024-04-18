@@ -1,4 +1,4 @@
-# Subprober v1.0.7 - A Fast Multi-Purpose Http Probing Tool for Penetration Testing
+# Subprober v1.0.8 - A Fast Multi-Purpose Http Probing Tool for Penetration Testing
 
 ![GitHub last commit](https://img.shields.io/github/last-commit/sanjai-AK47/Subprober) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/sanjai-AK47/Subprober) [![GitHub license](https://img.shields.io/github/license/sanjai-AK47/Subprober)](https://github.com/sanjai-AK47/Subprober/blob/main/LICENSE) [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/d-sanjai-kumar-109a7227b/)
 
@@ -6,13 +6,39 @@
 
 Subprober  is a powerful and efficient tool designed for penetration testers and security professionals. This release introduces several enhancements, bug fixes, and new features to elevate your subdomain probing experience. Subprober facilitates fast and reliable information extraction, making it an invaluable asset for penetration testing workflows.
 
-### Features in V1.0.7:
-- Subprober is capable to handle high loads
-- accuracy and concurrency are improved
-- add extra configuration in probing saving outputs
-- added new command `-dhp` `--disable-http-probe` to only probe https protocol
-- improved subprober's memory allocations
-- added deduplication that remove duplicated urls and etc..
+### Features in V1.0.8:
+- **New Probing configurations**
+
+    - **-ip**   : **finds the ips of urls**
+    - **-cn**   : **find the cname of urls**
+    - **-maxr** : **maximum redirection for url**
+    - **-ra**   : **enable random agent to probe with random agent**
+    - **-X**    : **custom method for urls to probe**
+    - **-H**    : **set custom header for urls to probe**
+    - **-sc**   : **removed default to show response code and this flag to improve the subprober I/O**
+    
+- **Improved Concurrency**
+
+    - **Subprober concurrency and accuracy are improved with asynchoronous libraries** `aiohttp`, `arsenic`, `aiodns` **which make subprober to asynchornously probe
+        urls**
+        
+- **Headless**
+
+    - **-ss**   : **enable to probe and take screenshots for urls (required: chormedriver, geckodriver to be installed)**
+    - **-st**   : **set a timeout value for urls to take screenshots**
+    - **-bt**   : **select your browser type to take screenshots**
+    
+- **IO Support**:
+
+    - **Subprober now support stdout when using `-nc` flag which make subprober output to be piped and extend your automated workflows**
+    - **Now Subprober automatically detect the stdin are connected or not and quits**
+    - **Improved Subprober is now capable to handle high load urls and probe for it and tested with 4m+ urls**
+
+### Speed and Loads:
+Subprober is really concurrent in probing and taking screenshots asynchornously and speed may differ depends on your network
+subprober can be used even in your  less sources `aws` VPS server without causing any high load to your system but only when probing
+but not when taking screenshots, ip, cnames and Subprober can handle high load of urls and subprober tested with 2m+ urls and probed
+without any problem, users can also try more urls than tested
 
 ### Installation and Updates
 
@@ -33,16 +59,6 @@ subprober -h
 ```
 
 
-
-### Recommended Concurrencies:
-
-**Info:** Subprober is improved with higher concurrency and accuracy for probings and recommend the users to use the concurrencies less which is efficient and accurate for probing
-  - 30-50   : this range of concurrency can be given when probing for more than 50K+ Subdomains, ips, domains etc..
-  - 50-80   : this range of concurrency can be given when probing for more than 100K+ Subdomains, ips, domains etc..
-  - 100-120 : this range of concurrency can be given when probing for more than 150K+ Subdomains, ips, domains etc..
-
-Note higher concurrency values may results in inaccurate results because subprober builded with higher concurrency and more accurate than other probing tool with following mentioned concurrency values
-
 ### Usage
 
 ```yaml
@@ -57,90 +73,75 @@ subprober -h
                                                          
                 
                 
-                    Author : D.Sanjai Kumar @CyberRevoltSecurities
-
-                                                                         
-                                                  
+                    @RevoltSecurities
 
           
 Subprober - An essential HTTP multi-purpose Probing Tool for Penetration testers
 
 [Description] :
 
-    Subprober is a high-performance tool designed for probing and  extract vital information efficiently.
+    Subprober is a high-performance tool designed for probing and extract vital information efficiently.
 
 [Options]:
 
-
     [INPUT]:
 
-        -f,   --filename              Specify the filename containing a list of subdomains for targeted probing. 
-                                      This flag is used to find and analyze status codes and other pertinent details.
-                                      
-        -u,   --url                   Specify a target URL for direct probing. This flag allows for the extraction of 
-                                      status codes and other valuable information.
-                                      
-        stdin                         Subprober supports stdin input by using cat or echo command with subprober using pipe `|`
+        -f,    --filename              specify the filename containing a list of urls for probing.                                       
+        -u,    --url                   specify a target URL for direct probing
+        stdin/stdout                   subprober supports both stdin/stdout and enable -nc to pipe the output of subprober
                                       
     [PROBES-CONFIG]:
 
-
-        -tl,  --title                 Retrieve and display the title of subdomains.
- 
-        -sv,  --server                Identify and display the server information associated with subdomains.
-
-        -wc,  --word-count            Retrieve and display the content length of subdomains.
-        
-        -l ,  --location              Display the redirected location of the response.
-
-        -apt, --application-type      Determine and display the application type of subdomains.
-
-        -p,   --path                  Specify a path for probe and get results ex:: -p admin.php
+        -sc,   --status-code           display the response status code
+        -tl,   --title                 retrieve and display the titles
+        -sv,   --server                identify and display the server name
+        -wc,   --word-count            retrieve and display the content length
+        -l ,   --location              display the redirected location of the response.
+        -apt,  --application-type      determine and display the application type.
+        -p,    --path                  specify a path for probe and get results ex: -p admin.php
+        -px,   --proxy                 specify a proxy to send the requests through your proxy or BurpSuite (ex: http://127.0.0.1:8080)
+        -gw,   --grep-word             enable The grep word flag will be usefull when grepping partiuclar status codes
+        -ar,   --allow-redirect        enabling these flag will make Subprober to follow the redirection and ger results
+        -dhp,  --disable-http-probe    disables the subprober from probing to http protocols and only for https when no protocol is specified
+        -X  ,  --method                request methods to probe and get response
+        -H  ,  --header                add a custom headers for probing and -H can be used multiple times to pass multiple header values (ex: -H application/json -H X-Forwarded-Host: 127.0.0.1)
+        -ra ,  --random-agent          enable Random User-Agent to use for probing (default: subprober/Alpha)
+        -ip ,  --ip                    find ip address for the host
+        -cn ,  --cname                 find cname for the host
+        -maxr, --max-redirection       set a max value to follow redirection (default: 10)
     
-        -px,  --proxy                 Specify a proxy to send the requests through your proxy or BurpSuite ex: 127.0.0.1:8080
-    
-        -gw,  --grep-word             Enable The grep word flag will be usefull when grepping partiuclar codes like for 200: OK ---> cat subprober-results.txt | grep OK 
-                                      This will show the results with 200-299 range codes
-                                                                  
-        -ar,  --allow-redirect        Enabling these flag will make Subprober to follow the redirection and ger results
-        
-        -dhp. --disable-http-probe    Disables the subprober from probing to http protocols and only for https when no protocol is specified
-        
+    [HEADLESS-Mode]:
+
+        -ss,   --screenshot            enable to take screenshot of the page using headless browsers with asynchronous performance
+        -st,   --screenshot-timeout    eet a timeout values for taking screenshosts  
+        -br,   --browser-type          select a browser for taking screenshots and browser available: chrome, firefox (default: chrome)
+                                       and requires chrome driver, gecko driver to be installed
     [MATCHERS]:
 
-        -ex,  --exclude               Exclude specific response status code(s) from the analysis.
-
-        -mc,  --match                 Specify specific response status code(s) to include in the analysis.
+        -ex,   --exclude               exclude specific response status code(s) from the analysis.
+        -mc,   --match                 specify specific response status code(s) to include in the analysis.
                                       
     [OUTPUT]:
     
-        -o,   --output                Define the output filename to store the results of the probing operation.
-        
-        -das, ---disable-auto-save    Disable the autosave of the results when no output file is specified 
+        -o,    --output                define the output filename to store the results of the probing operation.
+        -das,  ---disable-auto-save    disable the autosave of the results when no output file is specified.
+        -oD,   --output-directory      define a folder name to save  screenshot outputs.
 
     [Rate-Limits]:
 
-                      
-        -c,   --concurrency           Set the concurrency level for multiple processes. Default is 50.
-        
-        -to,  --timeout               Set a custom timeout value for sending requests.
-
+        -c,    --concurrency           set the concurrency level for subprober (default 50)
+        -to,   --timeout               set a custom timeout value for sending requests.
         
     [UPDATES]:
-
-
-        -up,  --update                Update Subprober to the latest version (pip required to be installed)
-
+        -up,   --update                update Subprober to the latest version (pip required to be installed)
+        -sup,  --show-updates          shows the current version subprober updates 
     [DEBUG]:
 
-                      
-        -h,   --help                  Show this help message for you and exit!
-        
-        -s,   --silent                Enable silent mode to suppress the display of Subprober banner and version information.
+        -h,    --help                  show this help message for you and exit!
+        -s,    --silent                enable silent mode to suppress the display of Subprober banner and version information.
+        -v,    --verbose               enable verbose mode to display error results on the console.
+        -nc,   --no-color              enabling the --no-color will display the output without any CLI colors
 
-        -v,   --verbose               Enable verbose mode to display error results on the console.
-
-        -nc,  --no-color              Enabling the --no-color will display the output without any CLI colors
 ```
 
 #### Basic Usage

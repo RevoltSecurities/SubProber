@@ -63,7 +63,7 @@ async def __probe__(url, args, sem, bar, loop):
     
     
     try:
-            baseurl = url
+            
             warnings.filterwarnings("ignore", category=ResourceWarning)
             
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -85,9 +85,8 @@ async def __probe__(url, args, sem, bar, loop):
             
             async with aiohttp.ClientSession(loop=loop) as session:
             
-                async with session.request(args.method.upper(),url, headers=headers,ssl=True, proxy=args.proxy, timeout=timeout, allow_redirects=redirect, max_redirects=args.max_redirection) as response:
-                    
-                        
+                async with session.request(args.method.upper(),url, headers=headers,ssl=False, proxy=args.proxy, timeout=timeout, allow_redirects=redirect, max_redirects=args.max_redirection) as response:
+                    baseurl = url   
                     response_text = await response.content.read()
                     
                 if args.cname:
@@ -309,13 +308,15 @@ async def __probe__(url, args, sem, bar, loop):
                         
                 await asyncio.sleep(0.000001)
                 if args.screenshot:
-                        
                     await screenshots(args, baseurl)
                                               
     except KeyboardInterrupt as e:
     
         print(f"[{blue}INFO{reset}]: {bold}{white}Subprober exits..{reset}")
         SystemExit
+    
+    except aiohttp.ClientConnectorError as e:
+        pass
         
     except aiohttp.ClientConnectionError as e:
         

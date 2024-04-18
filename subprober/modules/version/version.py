@@ -24,7 +24,7 @@ def __version__():
     url = f"https://api.github.com/repos/sanjai-AK47/Subprober/releases/latest"
     try:
         response = requests.get(url, verify=True, timeout=10)
-        if response.status_code == 200:
+        if response.status_code != 404:
             data = response.json()
             latest = data.get('tag_name')
             return latest 

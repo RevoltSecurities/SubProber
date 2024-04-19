@@ -1,4 +1,4 @@
-# Subprober v1.0.8 - A Fast Multi-Purpose Http Probing Tool for Penetration Testing
+# Subprober v1.0.9 - A Fast Multi-Purpose Http Probing Tool for Penetration Testing
 
 ![GitHub last commit](https://img.shields.io/github/last-commit/sanjai-AK47/Subprober) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/sanjai-AK47/Subprober) [![GitHub license](https://img.shields.io/github/license/sanjai-AK47/Subprober)](https://github.com/sanjai-AK47/Subprober/blob/main/LICENSE) [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/d-sanjai-kumar-109a7227b/)
 
@@ -7,6 +7,7 @@
 Subprober  is a powerful and efficient tool designed for penetration testers and security professionals. This release introduces several enhancements, bug fixes, and new features to elevate your subdomain probing experience. Subprober facilitates fast and reliable information extraction, making it an invaluable asset for penetration testing workflows.
 
 ### Features in V1.0.8:
+
 - **New Probing configurations**
 
     - **-ip**   : **finds the ips of urls**
@@ -19,8 +20,7 @@ Subprober  is a powerful and efficient tool designed for penetration testers and
     
 - **Improved Concurrency**
 
-    - **Subprober concurrency and accuracy are improved with asynchoronous libraries** `aiohttp`, `arsenic`, `aiodns` **which make subprober to asynchornously probe
-        urls**
+    - **Subprober concurrency and accuracy are improved with asynchoronous libraries** `aiohttp`, `arsenic`, `aiodns` **which make subprober to asynchornously probe urls**
         
 - **Headless**
 
@@ -33,6 +33,12 @@ Subprober  is a powerful and efficient tool designed for penetration testers and
     - **Subprober now support stdout when using `-nc` flag which make subprober output to be piped and extend your automated workflows**
     - **Now Subprober automatically detect the stdin are connected or not and quits**
     - **Improved Subprober is now capable to handle high load urls and probe for it and tested with 4m+ urls**
+
+- **Patched issues**:
+    - **Fixed issue to probe urls when passing `u`, `--url`** by [@blackcodersec](https://github.com/sanjai-AK47/SubProber/issues/4)
+    - **Fixed double appendence of path when using `-p`, `--path`**
+    - **Fixed update issue in previous version**
+    - **Fixed issue in saving scrennshots output when urls passed with `-p`, `--path`**
 
 ### Speed and Loads:
 Subprober is really concurrent in probing and taking screenshots asynchornously and speed may differ depends on your network

@@ -5,7 +5,7 @@ with open("README.md", "r") as streamr:
 
 setup(
     name='subprober',
-    version='1.0.8',
+    version='1.0.9',
     author='D. Sanjai Kumar',
     author_email='bughunterz0047@gmail.com',
     long_description=long_description,

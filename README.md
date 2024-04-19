@@ -6,7 +6,7 @@
 
 Subprober  is a powerful and efficient tool designed for penetration testers and security professionals. This release introduces several enhancements, bug fixes, and new features to elevate your subdomain probing experience. Subprober facilitates fast and reliable information extraction, making it an invaluable asset for penetration testing workflows.
 
-### Features in V1.0.8:
+### Features in V1.0.9:
 
 - **New Probing configurations**
 

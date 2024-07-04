@@ -7,9 +7,10 @@
 Subprober  is a powerful and efficient tool designed for penetration testers and security professionals. This release introduces several enhancements, bug fixes, and new features to elevate your subdomain probing experience. Subprober facilitates fast and reliable information extraction, making it an invaluable asset for penetration testing workflows.
 
 <h1 align="center">
-  <img src="https://github.com/RevoltSecurities/SubProber/assets/119435129/98ec1073-e565-40a6-a76c-483d81a1a3d0" width="700px">
+  <img src="https://github.com/RevoltSecurities/SubProber/assets/119435129/5b763884-6bb2-4881-9005-2cfc9b3a0d35" width="700px">
   <br>
 </h1>
+
 
 - Fast and configurable probings
 - Supported Inputs: hosts, URLS, IPs

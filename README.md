@@ -1,4 +1,4 @@
-# Subprober - A Fast Multi-Purpose Http Probing Tool for Penetration Testing
+# Subprober - An essential HTTP multi-purpose Probing Tool for Penetration Testers and Security Researchers with Asynchronous httpx client support
 
 ![GitHub last commit](https://img.shields.io/github/last-commit/sanjai-AK47/Subprober) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/sanjai-AK47/Subprober) [![GitHub license](https://img.shields.io/github/license/sanjai-AK47/Subprober)](https://github.com/sanjai-AK47/Subprober/blob/main/LICENSE) [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/d-sanjai-kumar-109a7227b/)
 
@@ -17,32 +17,20 @@ Subprober  is a powerful and efficient tool designed for penetration testers and
 - Supports proxies and customizable Header for probing
 - Progress your probing tasks
 
-### Features in V1.0.9:
+### Features in V2.0.0:
 
 - **New Probing configurations**
 
-    - **-ip**   : **finds the ips of urls**
-    - **-cn**   : **find the cname of urls**
-    - **-maxr** : **maximum redirection for url**
-    - **-ra**   : **enable random agent to probe with random agent**
-    - **-X**    : **custom method for urls to probe**
-    - **-H**    : **set custom header for urls to probe**
-    - **-sc**   : **removed default to show response code and this flag to improve the subprober I/O**
-    
-- **Headless**
+    - **--http2**             : **Now subprober support to request with Http/2 version**
+    - **--http-version**      : **display the server supported http version of the host**
+    - **--http-reason**       : **display the reason for http connection of the host**
+    - **--jarm-fingerprint**  : **display the jarm figerprint hash of the host**
 
-    - **-ss**   : **enable to probe and take screenshots for urls (required: chormedriver, geckodriver to be installed)**
-    - **-st**   : **set a timeout value for urls to take screenshots**
-    - **-bt**   : **select your browser type to take screenshots**
+### New Updates:
 
-### Why Subprober:
- 
-Subprober is a http probing toolkit build in **python**, wait a minute? yes you read it right its build in python Which is high in concurrent to probe.
-Hey wait its **python** and **Concurrent** how and what about **GIL**? Yes let me Explain you, Subprober utilized asynchronous performance which make 
-subprober to perform concurrent probing and taking screenshots which nearly gives performance like **GOLANG!!!**, Yes performance like **Golang** in **python**
-because it uses **uvloops** with **asynchronous** Libraries like **aiohttp**, **asyncio**, **arsenic**, **aiodns** by this, Subprober provide you more concurrent 
-performance with high accuracy and Subprober is capable to handle high loads and ability to give high performance in even low end systems and also to your low end VPS 
-without causing any high CPU loads even if it is high load of inputs to probe
+Subprober now supports HTTP/2 to give request and Improved concurrency using next generation http request client `httpx` 
+and also now gives jarm figerprints and other probe configurations. Subprober Concurrency performance improved with 
+more Asynchronous concurrency which make subprober more accurate and Concurrent tool for probing.
 
 ### Subprober Probing Configuration:
 
@@ -64,6 +52,7 @@ without causing any high CPU loads even if it is high load of inputs to probe
 | Cname of Host        | False         | `-cn`,   `--cname`                  |
 | Proxy                | False         | `-px`,   `--proxy`                  |
 | Custom Headers       | False         | `-H`,    `--header`                 |
+| Jarm                 | False         | `-jarm`  `--jarm-fingerprint`       |
 
 ### Subprober headless configurations:
 
@@ -105,7 +94,6 @@ subprober -h
 
 ```yaml
 subprober -h      
- 
 
    _____       __    ____             __             
   / ___/__  __/ /_  / __ \_________  / /_  ___  _____
@@ -117,12 +105,11 @@ subprober -h
                 
                     @RevoltSecurities
 
-          
-Subprober - An essential HTTP multi-purpose Probing Tool for Penetration testers
+Subprober - An essential HTTP multi-purpose Probing Tool for Penetration Testers and Security Researchers with Asynchronous httpx client support
 
 [Description] :
 
-    Subprober is a high-performance tool designed for probing and extract vital information efficiently.
+    Subprober is a high-performance tool designed for probing and extract vital information efficiently with Asynchronous concurrency performance
 
 [Options]:
 
@@ -134,34 +121,39 @@ Subprober - An essential HTTP multi-purpose Probing Tool for Penetration testers
                                       
     [PROBES-CONFIG]:
 
-        -sc,   --status-code           display the response status code
-        -tl,   --title                 retrieve and display the titles
-        -sv,   --server                identify and display the server name
-        -wc,   --word-count            retrieve and display the content length
-        -l ,   --location              display the redirected location of the response.
-        -apt,  --application-type      determine and display the application type.
-        -p,    --path                  specify a path for probe and get results ex: -p admin.php
-        -px,   --proxy                 specify a proxy to send the requests through your proxy or BurpSuite (ex: http://127.0.0.1:8080)
-        -gw,   --grep-word             enable The grep word flag will be usefull when grepping partiuclar status codes
-        -ar,   --allow-redirect        enabling these flag will make Subprober to follow the redirection and ger results
-        -dhp,  --disable-http-probe    disables the subprober from probing to http protocols and only for https when no protocol is specified
-        -X  ,  --method                request methods to probe and get response
-        -H  ,  --header                add a custom headers for probing and -H can be used multiple times to pass multiple header values (ex: -H application/json -H X-Forwarded-Host: 127.0.0.1)
-        -ra ,  --random-agent          enable Random User-Agent to use for probing (default: subprober/Alpha)
-        -ip ,  --ip                    find ip address for the host
-        -cn ,  --cname                 find cname for the host
-        -maxr, --max-redirection       set a max value to follow redirection (default: 10)
+        -sc,    --status-code           display the status code of the host
+        -tl,    --title                 display the title of host
+        -sv,    --server                display the server name of the host
+        -wc,    --word-count            display the content length of host
+        -l ,    --location              display the redirected location of the host
+        -apt,   --application-type      display the content type of the host
+        -p,     --path                  specify a path for probe and get results (example: -p admin.php)
+        -px,    --proxy                 specify a proxy to send the requests through your proxy (ex: http://127.0.0.1:8080)
+        -gw,    --grep-word             enable The grep word flag will be usefull when grepping particular status codes
+        -ar,    --allow-redirect        enable  to follow the redirections
+        -dhp,   --disable-http-probe    disables the subprober from probing to http protocols and only for https when no protocol is specified
+        -X  ,   --method                request methods to probe and get response (supported: get, post, head, put, delete, patch, trace, connect, options) (default: get)
+        -H  ,   --header                add a custom headers for probing and -H can be used multiple times to pass multiple header values (ex: -H application/json -H X-Forwarded-Host: 127.0.0.1)
+        -ra ,   --random-agent          enable Random User-Agent to use for probing (default: subprober/Alpha)
+        -ip ,   --ip                    display the ip of the host
+        -cn ,   --cname                 display the cname of the host
+        -maxr,  --max-redirection       set a max value to follow redirection (default: 10)
+        -http2, --http2                 enable to request with http2 support (default: Http/1.1)
+        -htv,   --http-version          display the server supported http version of the host
+        -hrs,   --http-reason           display the reason for http connection of the host
+        -jarm,  --jarm-fingerprint      display the jarm figerprint hash of the host
     
     [HEADLESS-Mode]:
 
         -ss,   --screenshot            enable to take screenshot of the page using headless browsers with asynchronous performance
-        -st,   --screenshot-timeout    eet a timeout values for taking screenshosts  
+        -st,   --screenshot-timeout    set a timeout values for taking screenshosts  
         -br,   --browser-type          select a browser for taking screenshots and browser available: chrome, firefox (default: chrome)
                                        and requires chrome driver, gecko driver to be installed
+                                       
     [MATCHERS]:
 
-        -ex,   --exclude               exclude specific response status code(s) from the analysis.
-        -mc,   --match                 specify specific response status code(s) to include in the analysis.
+        -ex,   --exclude               exclude specific response status code(s) from the analysis (example: -ex 404 403)
+        -mc,   --match                 specify specific response status code(s) to include in the analysis (example: -mc 200 302)
                                       
     [OUTPUT]:
     
@@ -175,11 +167,13 @@ Subprober - An essential HTTP multi-purpose Probing Tool for Penetration testers
         -to,   --timeout               set a custom timeout value for sending requests.
         
     [UPDATES]:
-        -up,   --update                update Subprober to the latest version (pip required to be installed)
-        -sup,  --show-updates          shows the current version subprober updates 
+    
+        -up,   --update                update subprober to the latest version (pip required to be installed)
+        -sup,  --show-updates          display the current or latest version subprober updates 
+        
     [DEBUG]:
 
-        -h,    --help                  show this help message for you and exit!
+        -h,    --help                  display this help message for you and exit!
         -s,    --silent                enable silent mode to suppress the display of Subprober banner and version information.
         -v,    --verbose               enable verbose mode to display error results on the console.
         -nc,   --no-color              enabling the --no-color will display the output without any CLI colors

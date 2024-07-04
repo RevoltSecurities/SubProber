@@ -29,7 +29,6 @@ setup(
         'urllib3>=1.26.18',
         'anyio>=4.2.0',
         'uvloop>=0.19.0',
-        'jarm>=0.1.0',
         'pyjarm>=0.0.5'
     ],
     entry_points={

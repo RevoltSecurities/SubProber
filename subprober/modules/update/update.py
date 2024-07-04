@@ -56,7 +56,7 @@ def __launch__(url,config):
 def __updatelog__(config):
     try:
         
-        url = f"https://raw.githubusercontent.com/sanjai-AK47/Subprober/main/subprober/updatelog.MD"
+        url = f"https://raw.githubusercontent.com/RevoltSecurities/SubProber/main/subprober/updatelog.md"
         
         response = requests.get(url, timeout=20, stream=True)
         

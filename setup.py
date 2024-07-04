@@ -5,13 +5,13 @@ with open("README.md", "r") as streamr:
 
 setup(
     name='subprober',
-    version='1.0.9',
+    version='2.0.0',
     author='D. Sanjai Kumar',
     author_email='bughunterz0047@gmail.com',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/sanjai-AK47/Subprober",
-    description='Subprober - A Http Fast Probing Tool for Penetration testing',
+    url="https://github.com/RevoltSecurities/Subprober",
+    description='Subprober - An essential HTTP multi-purpose Probing Tool for Penetration Testers and Security Researchers with Asynchronous httpx client support',
     packages=find_packages(),
     install_requires=[
         'aiofiles>=23.2.1',
@@ -28,7 +28,9 @@ setup(
         'structlog>=20.2.0' ,  
         'urllib3>=1.26.18',
         'anyio>=4.2.0',
-        'uvloop>=0.19.0'
+        'uvloop>=0.19.0',
+        'jarm>=0.1.0',
+        'pyjarm>=0.0.5'
     ],
     entry_points={
         'console_scripts': [

@@ -1,7 +1,7 @@
 # Subprober 
 An essential HTTP multi-purpose Probing Tool for Penetration Testers and Security Researchers with Asynchronous httpx client support
 
-![GitHub last commit](https://img.shields.io/github/last-commit/RevoltSecurities/Subprober) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/RevoltSecurities/Subprober) [![GitHub license](https://img.shields.io/github/license/RevoltSecurities/Subprober)](https://github.com/RevoltSecurities/Subprober/blob/main/LICENSE) [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/d-sanjai-kumar-109a7227b/)
+![GitHub last commit](https://img.shields.io/github/last-commit/RevoltSecurities/Subprober) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/RevoltSecurities/Subprober) [![GitHub license](https://img.shields.io/github/license/RevoltSecurities/Subprober)](https://github.com/RevoltSecurities/Subprober/blob/main/LICENSE) 
 
 ### Overview
 

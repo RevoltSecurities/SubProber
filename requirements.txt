@@ -19,3 +19,6 @@ simhash>=2.1.2
 urllib3>=1.26.18
 uvloop>=0.21.0
 websockets>=14.1
+anyio>=4.4.0 # not directly required, pinned by Snyk to avoid a vulnerability
+numpy>=1.22.2 # not directly required, pinned by Snyk to avoid a vulnerability
+zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability

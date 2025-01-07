@@ -6,7 +6,7 @@ with open("README.md", "r") as streamr:
 
 setup(
     name='subprober',
-    version='3.0.0',
+    version='3.0.1',
     author='D. Sanjai Kumar',
     author_email='bughunterz0047@gmail.com',
     long_description=long_description,
@@ -23,6 +23,8 @@ setup(
         'art>=6.4',
         'asynciolimiter>=1.1.1',
         'beautifulsoup4>=4.12.3',
+        'bs4>=0.0.2',
+        'lxml>=5.3.0',
         'colorama>=0.4.6',
         'cryptography>=44.0.0',
         'fake_useragent>=1.5.1',

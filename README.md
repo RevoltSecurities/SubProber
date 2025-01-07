@@ -12,24 +12,11 @@ Subprober  is a powerful and efficient tool designed for penetration testers and
   <br>
 </h1>
 
-
 - Fast and configurable probings
 - Supported Inputs: hosts, URLS, IPs
 - Supports multiple methods http requests
 - Supports proxies and customizable Header for probing
 - Progress your probing tasks
-
-### Features in V3.0.0:
-
-- **New Features**
-
-   - **Advanced Probing Configuration:** Fine-tune your probes with support for custom HTTP methods, headers, and proxies.
-   - **Improved Matching and Filtering Options:** Additional flags in `Matchers` and `Filters` sections for precise output control.
-   - **Optimized Rate Limiting and Concurrency:** Enhanced performance with user-defined rate limits and delays for probe requests.
-   - **Enhanced Headless Mode:** Thread options for screenshots to reduce memory overhead, supporting both PNG and PDF output formats.
-   - **Improved Output Formats:** Includes detailed response and request headers, with added support for JSON format outputs.
-   - **TLS Information Retrieval:** Capture TLS details during probes for deeper network insights.
-
 
 
 ### Subprober Probing Configuration:

@@ -19,3 +19,5 @@ simhash>=2.1.2
 urllib3>=1.26.18
 uvloop>=0.21.0
 websockets>=14.1
+bs4>=0.0.2
+lxml>=5.3.0

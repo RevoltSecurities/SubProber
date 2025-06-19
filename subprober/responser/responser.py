@@ -76,6 +76,7 @@ class Responser():
         self.magenta = self.logger.magenta
         self.cyan = self.logger.cyan
         self.blue = self.logger.blue  
+        self.random_color = self.logger.random_color
         self.utils = Utils()
         self.hasher = HashGen(self.hashes, self.args)
         self.jarmscanner = JarmScanner(self.args)

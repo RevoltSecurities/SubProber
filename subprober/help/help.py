@@ -8,7 +8,7 @@ class Help:
     def __init__(self):
         self.console = Console()
 
-    def help(self):
+    def display_help(self):
         
         description = Text(
             "Subprober - An essential HTTP multi-purpose Probing Tool for Penetration Testers and Security Researchers\n"

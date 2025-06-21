@@ -1,10 +1,8 @@
-import asyncio
 import httpx
 import warnings
 import argparse
 from datetime import datetime
 from bs4 import  XMLParsedAsHTMLWarning, MarkupResemblesLocatorWarning, BeautifulSoup, FeatureNotFound
-import aiodns
 import json
 from subprober.utils.utils import Utils
 from subprober.logger.logger import Logger
@@ -45,8 +43,6 @@ class Responser():
         
         self.args = args
         self.nameservers = nameservers
-        self.loop = asyncio.get_event_loop()
-        self.resolver = aiodns.DNSResolver(nameservers=self.nameservers, rotate=True, loop=self.loop)
         self.hashes = hashes
         self.mc = mc
         self.fc = fc
@@ -80,7 +76,7 @@ class Responser():
         self.utils = Utils()
         self.hasher = HashGen(self.hashes, self.args)
         self.jarmscanner = JarmScanner(self.args)
-        self.dnsresolver = AsyncDns(self.resolver,self.args)
+        self.dnsresolver = AsyncDns(self.args, self.nameservers)
         self.tlsscanner = TlsCert()
         self.websocketer = AsyncWebsocket(self.args)
         self.saver = Save(filename=self.args.output, jsonize=self.args.json)

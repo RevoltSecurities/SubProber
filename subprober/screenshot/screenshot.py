@@ -50,7 +50,7 @@ class Headless:
         if self.browser is None:
             self.playwright = await async_playwright().start()
             launch_args = {
-                "headless": False,
+                "headless": True,
                 "timeout": (self.args.screenshot_timeout * 1000),
                 "args": [
                     "--ignore-certificate-errors",

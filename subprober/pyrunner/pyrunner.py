@@ -276,6 +276,7 @@ class Runner:
         while not self.stop_requested:
             url = await self._pychannel.get()
             await self._safe_probe_(self.args.method.upper(), url, self.args.allow_redirect)
+            self._pychannel.task_done()
 
     async def sprint(self):
         try:

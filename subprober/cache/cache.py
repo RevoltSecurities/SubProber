@@ -1,12 +1,11 @@
 import asyncio
 from typing import Any, AsyncIterator, Optional
 from diskcache import Cache
-import asyncio
 
 class AsyncDiskCache:
 
     def __init__(self, directory: str):
-        self._cache = Cache(directorysize_limit=0,eviction_policy='none')
+        self._cache = Cache(directory,size_limit=0,eviction_policy='none')
 
     async def set(self, key: str, value: Any) -> None:
         await asyncio.to_thread(self._cache.set, key, value)

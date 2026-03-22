@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-from subprober.modules.handler import Main
-
-def main():
-    
-   Main()
-    
-if __name__ == '__main__':
-    
-    main()
-=======
 from subprober.cli.cli import CLI
 from subprober import Settings,PyRunner
 from revoltlogger import Logger
@@ -49,4 +38,3 @@ class Subprober:
 
 def main():
     asyncio.run(Subprober().run())
->>>>>>> a83d61f (feat: updates for v3.1.0)

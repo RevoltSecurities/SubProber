@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=75.2.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "subprober"
+version = "3.0.2"
+description = "Subprober - An essential HTTP multi-purpose Probing Tool for Penetration Testers and Security Researchers with Asynchronous httpx client support"
+readme = "README.md"
+requires-python = ">=3.13"
+license = { text = "MIT" }
+authors = [
+    { name = "D. Sanjai Kumar", email = "bughunterz0047@gmail.com" },
+    { name = "V. Gokul", email = "th3gokul@gmail.com" },
+    {name="Pugalarasan K", email="0xpugal@gmail.com"}
+]
+keywords = ["http-probing", "pentesting", "bugbounty", "async", "httpx", "security", "subdomain", "reconnaissance"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+dependencies = [
+    "aiodns>=3.5.0",
+    "aiohttp>=3.13.0",
+    "aiojarm>=0.2.2",
+    "aiolimiter>=1.2.1",
+    "aiosqlite>=0.21.0",
+    "beautifulsoup4>=4.14.2",
+    "bs4>=0.0.2",
+    "cryptography>=46.0.2",
+    "gitupdater",
+    "httpx[http2]>=0.28.1",
+    "khonshu>=1.1.0",
+    "lxml>=6.0.2",
+    "mmh3>=5.2.0",
+    "playwright>=1.55.0",
+    "plyvel>=1.5.0",
+    "revoltlogger>=1.0.1",
+    "revoltutils",
+    "richparser>=1.0.1",
+    "simhash>=2.1.2",
+    "websockets>=15.0.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/RevoltSecurities/Subprober"
+
+[project.scripts]
+subprober = "subprober.subprober:main"
+
+[tool.uv.sources]
+gitupdater = { git = "https://github.com/RevoltSecurities/GitUpdater" }
+revoltutils = { git = "https://github.com/RevoltSecurities/Revoltutils" }

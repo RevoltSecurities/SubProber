@@ -1,20 +1,18 @@
-name: Release to PyPI
+name: Publish to PyPI
 
 on:
   release:
-    types:
-      - created
+    types: [published]
 
 jobs:
-  deploy:
+  build-and-publish:
     runs-on: ubuntu-latest
-
     permissions:
+      id-token: write
       contents: read
 
     steps:
-      - name: Check out code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -22,7 +20,7 @@ jobs:
           python-version: "3.13"
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v4
 
       - name: Build package
         run: uv build
@@ -30,4 +28,4 @@ jobs:
       - name: Publish to PyPI
         run: uv publish
         env:
-          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}

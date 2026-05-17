@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "subprober"
-version = "3.0.2"
+version = "3.1.0"
 description = "Subprober - An essential HTTP multi-purpose Probing Tool for Penetration Testers and Security Researchers with Asynchronous httpx client support"
 readme = "README.md"
 requires-python = ">=3.13"
